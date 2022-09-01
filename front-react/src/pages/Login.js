@@ -37,7 +37,7 @@ const HeaderStyle = styled('header')(({ theme }) => ({
 
 const SectionStyle = styled(Card)(({ theme }) => ({
   width: '100%',
-  maxWidth: 464,
+  maxWidth: 800,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -68,9 +68,9 @@ export default function Login() {
           <Logo />
 
           {smUp && (
-            <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+            <Typography variant="h4" sx={{ mt: { md: -2 } }}>
               Don’t have an account? {''}
-              <Link variant="subtitle2" component={RouterLink} to="/register">
+              <Link variant="h5" component={RouterLink} to="/register">
                 Get started
               </Link>
             </Typography>
@@ -80,16 +80,16 @@ export default function Login() {
         {mdUp && (
           <SectionStyle>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back
+              Welcome to 모두의 강의
             </Typography>
-            <img src="/static/illustrations/illustration_login.png" alt="login" />
+            <img src="/static/illustrations/img.png" alt="login" />
           </SectionStyle>
         )}
 
         <Container maxWidth="sm">
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Sign in to Minimal
+              Sign in 모두의 강의
             </Typography>
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter your details below.</Typography>

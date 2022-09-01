@@ -1,8 +1,10 @@
-import { Navigate, useRoutes } from 'react-router-dom';
+import { Children, Routes, Switch, Route, Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
-//
+// auth check
+import PrivateRoute from './privateRoute';
+import AdminRoute from './adminRoute';
 import Blog from './pages/Blog';
 import User from './pages/User';
 import Login from './pages/Login';
@@ -18,8 +20,15 @@ import DashboardApp from './pages/DashboardApp';
 export default function Router() {
   return useRoutes([
     {
+      path: '/admin',
+      element: <AdminRoute><DashboardLayout /></AdminRoute>,
+      children: [
+        { path: 'member', element: <User /> },
+      ],
+    },
+    {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
@@ -35,7 +44,9 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '/', element: <Navigate to="/dashboard/app" /> },
+        // { path: '/', element: <Login /> },
         { path: 'login', element: <Login /> },
+//        { path: 'logout', element: <Login /> },
         { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '*', element: <Navigate to="/404" /> },
@@ -44,3 +55,4 @@ export default function Router() {
     { path: '*', element: <Navigate to="/404" replace /> },
   ]);
 }
+
