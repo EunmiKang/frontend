@@ -14,6 +14,7 @@ import Products from './pages/Products';
 import Auction from './pages/Auction';
 import AuctionBid from './pages/AuctionBid';
 import DashboardApp from './pages/DashboardApp';
+import LectureCategory from './pages/LectureCategory';
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +37,7 @@ export default function Router() {
         { path: 'blog', element: <Blog /> },
         { path: 'auction', element: <Auction /> },
         { path: 'auctionBid', element: <AuctionBid /> },
+        { path: 'lecturecategory', element: <LectureCategory /> },
 
       ],
     },
