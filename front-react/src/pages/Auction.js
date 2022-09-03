@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import moment from 'moment';
 
- 
+
 // material
 import {
   Card,
@@ -51,11 +51,11 @@ import USERLIST from '../_mock/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'lectTypeNm', label: '강의분류', alignRight: false },
-  { id: 'lectName', label: '강의명', alignRight: false },
+  { id: 'categoryName', label: '강의분류', alignRight: false },
+  { id: 'title', label: '강의명', alignRight: false },
   { id: 'startAuctionDate', label: '경매시작일자', alignRight: false },
   { id: 'endAuctionDate', label: '경매종료일자', alignRight: false },
-  { id: 'cntStudent', label: '수강인원', alignRight: false },
+  { id: 'maxEnrollment', label: '수강인원(최소/최대)', alignRight: false },
   { id: 'lectCost', label: '강의료', alignRight: false },
   { id: 'auctionStatus', label: '경매상태', alignRight: false },
   // { id: 'bidCnt', label: '입찰수', alignRight: false },
@@ -92,7 +92,7 @@ function applySortFilter(array, comparator, query) {
   });
   console.log(array);
   if (query) {
-    return filter(array, (auction) => auction.lectName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (auction) => auction.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -194,7 +194,7 @@ export default function Auction() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - info.length) : 0;
 
   const filteredUsers = applySortFilter(info, getComparator(order, orderBy), filterName);
-  
+
   const isUserNotFound = filteredUsers.length === 0;
 
   // 경매취소 확인창
@@ -252,7 +252,7 @@ export default function Auction() {
       })
     }
 
-    
+
 
 
 
@@ -311,7 +311,7 @@ export default function Auction() {
   }
 
   useEffect(() => {
-    
+
     axios(
 
       {
@@ -330,7 +330,7 @@ export default function Auction() {
 
 
 
- 
+
 
 
 
@@ -344,7 +344,7 @@ export default function Auction() {
   }
 
   const dateToString = (rawDate) => {
-      
+
     if(rawDate !== null){
         return moment(rawDate).format('YYYY-MM-DD')
       }
@@ -358,9 +358,9 @@ export default function Auction() {
 
   return (
 
-    
 
-    
+
+
     <Page title="User">
 
 
@@ -369,15 +369,15 @@ export default function Auction() {
       <Container>
 
 
-    
-        
+
+
 
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             경매조회
           </Typography>
-          
+
           <DashboardNavbar onOpenSidebar={() => setOpen(false)} />
 
 {/*
@@ -394,7 +394,7 @@ export default function Auction() {
               selectedlectId={selected}
             />
 
-            {" "}     
+            {" "}
             <Button variant="outlined" onClick={confirmPopup} component={RouterLink} to="#" startIcon={<Iconify icon="ic:outline-delete" />}>
               경매취소
             </Button>
@@ -420,9 +420,9 @@ export default function Auction() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // const { id, lectName, lectStatus,  startAuctionDate, endAuctionDate} = row;
+                    // const { id, title, lectStatus,  startAuctionDate, endAuctionDate} = row;
 
-                    const { lectId, lectTypeNm, lectName, startAuctionDate,  endAuctionDate, cntStudent, lectCost, auctionStatus} = row;
+                    const { lectId, categoryName, title, startAuctionDate,  endAuctionDate, maxEnrollment, minEnrollment, lectCost, auctionStatus} = row;
 
 
                     const isItemSelected = selected.indexOf(lectId) !== -1;
@@ -440,15 +440,15 @@ export default function Auction() {
                           <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, lectId)} />
                         </TableCell>
 
-                        <TableCell align="left">{lectTypeNm}</TableCell>
+                        <TableCell align="left">{categoryName}</TableCell>
 
-   
-                        <TableCell align="left">{lectName}</TableCell>
 
-                        {/* <TableCell align="left">{lectName}</TableCell> */}
+                        <TableCell align="left">{title}</TableCell>
+
+                        {/* <TableCell align="left">{title}</TableCell> */}
                         <TableCell align="left">{dateToString(startAuctionDate)}</TableCell>
                         <TableCell align="left">{dateToString(endAuctionDate)}</TableCell>
-                        <TableCell align="left">{cntStudent}</TableCell>
+                        <TableCell align="left">{minEnrollment} / {maxEnrollment}</TableCell>
                         <TableCell align="left">{lectCost}</TableCell>
                         {/* <TableCell align="left">{auctionStatus}</TableCell> */}
 
@@ -496,9 +496,9 @@ export default function Auction() {
           />
         </Card>
       </Container>
-      
+
     </Page>
-    
+
   );
 
 }

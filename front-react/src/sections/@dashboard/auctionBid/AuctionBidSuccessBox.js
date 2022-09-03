@@ -104,7 +104,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => _user.lectureBidId.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -139,23 +139,32 @@ const TABLE_HEAD = [
   { id: '' },
 ];
 
+export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenBidSuccessRegister, onCloseBidSuccessRegister, onAfterSaveAuction, selectedLectinfo, bidDetailInfo, selectedAuctionId, successBidFlag , initBidCheck}) {
 
-export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenBidSuccessRegister, onCloseBidSuccessRegister, onAfterSaveAuction, selectedLectinfo, bidDetailInfo, selectedAuctionId, successBidFlag }) {
-  console.log(selectedAuctionId);
-  console.log(bidDetailInfo);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [selected, setSelected] = useState([]);
+  const [saveSelected, setSaveSelected] = useState([]);
+
   const [filterName, setFilterName] = useState('');
   const [auctionId, setAuctionId] = useState([]);
   const [info, setInfo] = useState([]);
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - bidDetailInfo.length) : 0;
+  const filteredUsers = applySortFilter(bidDetailInfo, getComparator(order, orderBy), filterName);
   const isUserNotFound = filteredUsers.length === 0;
 
+
+  // console.log(159);
+  // useEffect(() => {
+  //   setSelected([]);
+  //   console.log(18);
+  // },[]);
+  if(initBidCheck===false){
+    selected.length =0;
+  }
 
 
   const handleRequestSort = (event, property) => {
@@ -165,12 +174,13 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
   };
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = bidDetailInfo.map((n) => n.lectureBidId);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
+
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
@@ -197,53 +207,43 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
     setPage(0);
   };
 
-  const onBidDetailButtonClick = (state, rowInfo, column, instance) => {
-    handleOpenBidSuccessRegister();
-    return {
-        onClick: e => {
-            console.log('A Td Element was clicked!')
-            console.log('it produced this event:', e)
-            console.log('It was in this column:', column)
-            console.log('It was in this row:', rowInfo)
-            console.log('It was in this table instance:', instance)
-          }
-      }
-  }
 
-  const onBidSuccessButtonClick = (event, auctionId) => {
+  // const onBidSuccessButtonClick = (event, auctionId) => {
 
-    searchBidDetailList(auctionId);
+  //   searchBidDetailList(auctionId);
 
-  }
+  // }
 
-  const searchBidDetailList = (auctionId) => {
-    axios(
+  // const searchBidDetailList = (auctionId) => {
+  //   alert(13);
+  //   axios(
 
-      {
-        url: "http://localhost:8084/lectureBids/searchLectureBidList/",
-        method: "get",
-        params: {"auctionId": 1}
-      }
-    )
-    .then(
-      res => console.log(res),
-      setAuctionId(auctionId),
-      handleOpenBidSuccessRegister()
-    )
-    .catch(err => console.log(err));
+  //     {
+  //       url: "http://localhost:8084/lectureBids/searchLectureBidList/",
+  //       method: "get",
+  //       params: {"auctionId": 1}
+  //     }
+  //   )
+  //   .then(
+  //     res => console.log(res),
+  //     setAuctionId(auctionId),
+  //     handleOpenBidSuccessRegister()
+  //   )
+  //   .catch(err => console.log(err));
 
-  }
+  // }
 
   // 낙찰팝업 OPEN/CLOSE
-  const [openBidSuccessRegister, setOpenBidSuccessRegister] = useState(false);
+  //  const [openBidSuccessRegister, setOpenBidSuccessRegister] = useState(false);
 
-  const handleOpenBidSuccessRegister = () => {
-    setOpenBidSuccessRegister(true);
-  };
+  //  const handleOpenBidSuccessRegister = () => {
+  //   alert(0);
+  //    setOpenBidSuccessRegister(true);
+  //  };
 
-  const handleCloseBidSuccessRegister = () => {
-    setOpenBidSuccessRegister(false);
-  };
+  // const handleCloseBidSuccessRegister = () => {
+  //   setOpenBidSuccessRegister(false);
+  // };
 
 
 
@@ -253,15 +253,22 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
   const [endDate, setEndDate] = useState(new Date());
   const [bidPrice, setBidPrice] = useState(0);
   const confirmPopup = () => {
+    console.log(selected);
+    for(let i =0; i<selected.length; i+=1){
+      console.log(selected[i]);
+      saveSelected[i]=selected[i];
+      // setSaveSelected(selected[i]);
+    }
+    setSaveSelected(selected);
     onCloseBidSuccessRegister();
-
-    if(selected.length === 0) {
+    console.log(saveSelected);
+    if(saveSelected.length === 0) {
       alertPopup('낙찰할 입찰내역을 선택해주세요.', 'fail');
 
       return;
     }
 
-    if(selected.length > 1) {
+    if(saveSelected.length > 1) {
       alertPopup('1건만 선택하여 낙찰을 진행해주세요.', 'fail');
       return;
     }
@@ -288,6 +295,7 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
     if(inputMessage === 'BID_SUCCESS'){
       inputMessage = '낙찰이 이미 진행되었습니다.'
     }
+
     if(flag==='fail'){
       confirmAlert({
         title : '확인',
@@ -296,7 +304,7 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
           {
             label: '확인',
             onClick: () => onOpenBidSuccessRegister()
-  
+
           }
         ]
       })
@@ -309,33 +317,31 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
           {
             label: '확인',
             onClick: () => onAfterSaveAuction()
-  
+
           }
         ]
       })
     }
 
 
-    
+
   }
 
   const successLectureBid = () => {
     console.log(selectedAuctionId);
-    console.log(selected[0]);
+    console.log(saveSelected[0]);
 
     axios({
       method: 'put',
       url: 'http://localhost:8084/lectureBids/successLectureBid',
       data: {
-        id: selected[0],
+        id: saveSelected[0],
         auctionId: selectedAuctionId
       }
     })
     .then(res => alertPopup(res.data))
     .catch(err => console.log(err))
   }
-
-
 
 
 
@@ -376,14 +382,14 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
                 order={order}
                 orderBy={orderBy}
                 headLabel={TABLE_HEAD}
-                rowCount={USERLIST.length}
+                rowCount={bidDetailInfo.length}
                 numSelected={selected.length}
                 onRequestSort={handleRequestSort}
                 onSelectAllClick={handleSelectAllClick}
               />
               <TableBody>
                 {bidDetailInfo.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                  // const { id, lectName, lectStatus,  startAuctionDate, endAuctionDate} = row;
+                  // const { id, title, lectStatus,  startAuctionDate, endAuctionDate} = row;
 
                   const { lectureBidId, memberId, memberName, price, status} = row;
 
@@ -407,7 +413,11 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
                       <TableCell align="left">{memberId} </TableCell>
                       <TableCell align="left">{memberName}</TableCell>
                       <TableCell align="left">{price}</TableCell>
-                      <TableCell align="left">{status}</TableCell>
+                      <TableCell align="left">
+                          <Label variant="ghost" color={((status === 'FAIL')&& 'error') || 'success'}>
+                             {status}
+                          </Label>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -444,7 +454,7 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={USERLIST.length}
+          count={bidDetailInfo.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
