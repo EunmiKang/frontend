@@ -1,4 +1,3 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 
@@ -57,10 +56,14 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../user';
 import USERLIST from '../../../_mock/user';
 
 
-
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../../axiosApi';
 
 
 // ----------------------------------------------------------------------
+
+const http = axiosApi("lectureBids");
+
 
 export const SORT_BY_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -327,13 +330,14 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
 
   }
 
-  const successLectureBid = () => {
+  const successLectureBid = async () => {
+
     console.log(selectedAuctionId);
     console.log(saveSelected[0]);
 
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/lectureBids/successLectureBid',
+      url: '/successLectureBid',
       data: {
         id: saveSelected[0],
         auctionId: selectedAuctionId

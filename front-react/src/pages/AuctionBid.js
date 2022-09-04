@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
@@ -36,7 +35,8 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 import { AuctionBidInputBox, AuctionBidSuccessBox, AuctionBidListToolbar } from '../sections/@dashboard/auctionBid';
 
-
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../sections/axiosApi';
 
 
 
@@ -64,6 +64,9 @@ const TABLE_HEAD = [
 
   { id: '' },
 ];
+
+const http = axiosApi("lectureBids");
+const httpAuction = axiosApi("auctions");
 
 // ----------------------------------------------------------------------
 
@@ -310,27 +313,23 @@ export default function User() {
 
 
   // const response = await axios.get(this.BASE_URL + '/api/hello', data);
-  const myMethod = () => {
-    axios.put(`http://localhost:8084/auctions/1/cancel`,
-    {
-      withCredentials: true // 쿠키 cors 통신 설정
-    }).then(response => {
-      console.log(response);
-    })
+  // const myMethod = () => {
+  //   axios.put(`http://localhost:8084/auctions/1/cancel`,
+  //   {
+  //     withCredentials: true // 쿠키 cors 통신 설정
+  //   }).then(response => {
+  //     console.log(response);
+  //   })
 
-  }
-
-
+  // }
 
 
-  const lectureBidCancel = () => {
+
+  const lectureBidCancel = async () => {
     console.log(selected);
-
-
-
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/lectureBids/cancelBid',
+      url: '/cancelBid',
       data: {
         auctionIds: selected,
         memberId: 1004
@@ -340,12 +339,10 @@ export default function User() {
     .catch(err => console.log(err))
   }
 
-
-  const searchBidDetailList = (auctionId) => {
-    axios(
-
+  const searchBidDetailList = async (auctionId) => {
+    http(
       {
-        url: "http://localhost:8084/lectureBids/searchLectureBidList/",
+        url: "/searchLectureBidList",
         method: "get",
         params: {"auctionId": auctionId}
       }
@@ -357,21 +354,20 @@ export default function User() {
       setClickedAuctionId(auctionId),
       setInitBidCheck(true),
       handleOpenBidSuccessRegister()
-
-
     )
     .catch(err => console.log(err));
 
   }
 
-  const searchAuctionList = () => {
-    axios.get(`http://localhost:8084/auctions/searchAuctionLectureBidList`,{})
+  const searchAuctionList = async () => {
+    httpAuction.get(`/searchAuctionLectureBidList`,{})
     .then(res => setInfo(res.data))
     .catch(err => console.log(err))
   }
 
+
   useEffect(() => {
-    axios.get('http://localhost:8084/auctions/searchAuctionLectureBidList')
+    httpAuction.get('/searchAuctionLectureBidList')
     .then(res => setInfo(res.data))
     .catch(err => console.log(err));
   }, [])
@@ -379,9 +375,9 @@ export default function User() {
 
   const auctionBidCancel= () => {
     console.log(info);
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/lectureBids/cancelBid',
+      url: '/cancelBid',
       data: {
         memberId: 1004,
         auctionId: 1

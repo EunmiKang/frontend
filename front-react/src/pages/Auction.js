@@ -1,4 +1,6 @@
-import axios from 'axios';
+// import axios from 'axios';
+
+
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
@@ -38,6 +40,8 @@ import Searchbar from '../layouts/dashboard/Searchbar';
 import DashboardNavbar from '../layouts/dashboard/DashboardNavbar';
 import { AuctionListToolbar, AuctionInputBox } from '../sections/@dashboard/auction';
 
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../sections/axiosApi';
 
 
 
@@ -64,7 +68,7 @@ const TABLE_HEAD = [
 
   { id: '' },
 ];
-
+const http = axiosApi("auctions");
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -261,64 +265,101 @@ export default function Auction() {
 
   // const auctions = () => {
 
-  //   const response = axios.get("http://localhost:8084/auctions");
+  //   const response = axios.get("http://localhost:8088/auctions");
   //   console.log(response.data);
 
   //  }
 
 
   // const headers = {};
-  // const response = axios.get('http://localhost:8084/auctions', headers);
-  // response = axios.get("http://localhost:8084/auctions");
+  // const response = axios.get('http://localhost:8088/auctions', headers);
+  // response = axios.get("http://localhost:8088/auctions");
   // console.log(response.data);
   // console.log(181818181818)
 
 
   // const response = await axios.get(this.BASE_URL + '/api/hello', data);
-  const myMethod = () => {
-    axios.put(`http://localhost:8084/auctions/1/cancel`,
-    {
-      withCredentials: true // 쿠키 cors 통신 설정
-    }).then(response => {
-      console.log(response);
-    })
+  // const myMethod = () => {
+  //   axios.put(`http://localhost:8088/auctions/1/cancel`,
+  //   {
+  //     withCredentials: true // 쿠키 cors 통신 설정
+  //   }).then(response => {
+  //     console.log(response);
+  //   })
 
-  }
-
-
+  // }
 
 
-  const auctionCancel = () => {
 
-    axios({
+  const auctionCancel = async () => {
+    http({
       method: 'put',
-      url: 'http://localhost:8084/auctions/auctionCancel',
+      url: '/auctionCancel',
       data: {
         lectIds: selected, // selected에 lectId를 담고 있다.
-        // id: '1'
       }
     })
     .then(res => alertPopup(res.data))
     .catch(err => console.log(err))
   }
 
+  // const auctionCancel = () => {
+
+  //   axios({
+  //     method: 'put',
+  //     url: 'http://localhost:8088/auctions/auctionCancel',
+  //     data: {
+  //       lectIds: selected, // selected에 lectId를 담고 있다.
+  //       // id: '1'
+  //     }
+  //   })
+  //   .then(res => alertPopup(res.data))
+  //   .catch(err => console.log(err))
+  // }
 
 
-  const searchAuctionList = () => {
-    axios.get('http://localhost:8084/auctions/searchAuctionList')
+
+  // const searchAuctionList = () => {
+  //   axios.get('http://localhost:8088/auctions/searchAuctionList')
+  //   .then(res => setInfo(res.data))
+  //   .catch(err => console.log(err));
+  // }
+
+
+  const searchAuctionList = async () => {
+    http({
+      method: 'get',
+      url: '/searchAuctionList',
+    })
     .then(res => setInfo(res.data))
     .catch(err => console.log(err));
   }
 
+  // useEffect(() => {
+
+  //   axios(
+
+  //     {
+  //       url: 'http://localhost:8088/auctions/searchAuctionList',
+  //       method: "get"
+  //     }
+  //   )
+    // .then(
+    //   res => setInfo(res.data)
+    // )
+    // .catch(err => console.log(err));
+
+
+
+  // }, [])
+
+
   useEffect(() => {
 
-    axios(
-
-      {
-        url: 'http://localhost:8084/auctions/searchAuctionList',
-        method: "get"
-      }
-    )
+    http({
+      method: 'get',
+      url: '/searchAuctionList'
+    })
     .then(
       res => setInfo(res.data)
     )
@@ -327,6 +368,17 @@ export default function Auction() {
 
 
   }, [])
+
+  // const onSubmit = async () => {
+  //   http({
+  //     method: 'post',
+  //     url: '/login',
+  //     data: {
+  //       email: methods.getValues().inputEmail,
+  //       pwd: methods.getValues().inputPassword,
+  //     }
+  //   })
+  // }
 
 
 
