@@ -38,7 +38,7 @@ const navConfig = [
   },
   {
     title: '강의분류',
-    path: '/dashboard/lecturecategory',
+    path: '/admin/lecturecategory',
     icon: getIcon('ant-design:tag-filled'),
   },
   {

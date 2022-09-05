@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { confirmAlert } from 'react-confirm-alert'
 import { filter } from 'lodash';
@@ -25,6 +25,11 @@ import Scrollbar from '../components/Scrollbar';
 // sections
 import { RegisterCategoryForm } from '../sections/lecturecategory';
 import { CategoryModifyInputBox, CategoryListHead, CategoryListToolbar } from '../sections/@dashboard/lecturecategory';
+// axios 대체 - 헤더에 JWT토큰 추가 ( import 할때 위치를 아래에 두어야 할 경우가 있습니다.)
+import axiosApi from '../sections/axiosApi';
+
+// 서비스 호출 context url 설정
+const httpCategory = axiosApi("lectureCategories");
 
 // -------------------------------------------------------------------
 const TABLE_HEAD = [
@@ -97,7 +102,10 @@ export default function LectureCategory() {
 
   // 전체 카테고리 조회
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACK_CATEGORY_URL}/lectureCategories/searchAll`)
+    httpCategory({
+      method: 'get',
+      url: '/searchAll'
+    })
     .then(res => setCATEGORYLIST(res.data))
     .catch(err => console.log(err));
   }, []);
@@ -139,10 +147,10 @@ export default function LectureCategory() {
 
 
   const requestDelete = (selectedCategoryId, selectedCategoryName) => {
-    console.log(selectedCategoryId);
-    axios({
+    // console.log(selectedCategoryId);
+    httpCategory({
       method: 'delete',
-      url: `${process.env.REACT_APP_BACK_CATEGORY_URL}/lectureCategories/deleteCategory`,
+      url: '/deleteCategory',
       data: {
         categoryId: selectedCategoryId,
         categoryName: selectedCategoryName
@@ -154,7 +162,7 @@ export default function LectureCategory() {
         alert('해당 분류가 존재하지 않습니다.');
       } else {
         alert('삭제되었습니다.');
-        window.location.replace('/dashboard/lectureCategory');
+        window.location.replace('/admin/lectureCategory');
       }
     })
     .catch(err => console.log(err));

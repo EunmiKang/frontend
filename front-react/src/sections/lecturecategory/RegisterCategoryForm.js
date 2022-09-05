@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -10,8 +10,15 @@ import { Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import { FormProvider, RHFTextField } from '../../components/hook-form';
+// sections
+// axios 대체 - 헤더에 JWT토큰 추가 ( import 할때 위치를 아래에 두어야 할 경우가 있습니다.)
+import axiosApi from '../axiosApi';
+
 
 // ----------------------------------------------------------------------
+
+// 서비스 호출 context url 설정
+const httpCategory = axiosApi("lectureCategories");
 
 export default function RegisterCategoryForm() {
 
@@ -38,17 +45,21 @@ export default function RegisterCategoryForm() {
 
   const onSubmit = async () => {
     // console.log(methods.getValues().categoryName);
-    axios.post(`${process.env.REACT_APP_BACK_CATEGORY_URL}/lectureCategories/registerCategory`, {
-      categoryName: methods.getValues().categoryName
+    httpCategory({
+      method: 'post',
+      url: '/registerCategory',
+      data: {
+        categoryName: methods.getValues().categoryName
+      }
     })
-    .then(res => {
+    .then(res =>{
       const result = res.data;
       // console.log(result);
       if(result === -1) {
         alert('해당 분류가 이미 존재합니다.');
       } else {
         alert('등록되었습니다.');
-        window.location.replace('/dashboard/lectureCategory');
+        window.location.replace('/admin/lectureCategory');
       }
     })
     .catch(err => console.log(err));

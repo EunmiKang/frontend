@@ -26,6 +26,7 @@ export default function Router() {
       element: <AdminRoute><DashboardLayout /></AdminRoute>,
       children: [
         { path: 'member', element: <User /> },
+        { path: 'lecturecategory', element: <LectureCategory /> },
       ],
     },
     {
@@ -38,9 +39,8 @@ export default function Router() {
         { path: 'blog', element: <Blog /> },
         { path: 'auction', element: <Auction /> },
         { path: 'auctionBid', element: <AuctionBid /> },
-        { path: 'lecturecategory', element: <LectureCategory /> },
         { path: 'interestcategory', element: <InterestCategory /> },
-        
+
       ],
     },
     {

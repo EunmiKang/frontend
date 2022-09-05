@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { confirmAlert } from 'react-confirm-alert'
 import { filter } from 'lodash';
@@ -25,10 +25,18 @@ import Page from '../components/Page';
 import Scrollbar from '../components/Scrollbar';
 
 // sections
-import { AddInterestCategoryForm } from '../sections/lecturecategory';
 import { CategoryListHead, CategoryListToolbar } from '../sections/@dashboard/lecturecategory';
+// axios 대체 - 헤더에 JWT토큰 추가 ( import 할때 위치를 아래에 두어야 할 경우가 있습니다.)
+import axiosApi from '../sections/axiosApi';
+
 
 // -------------------------------------------------------------------
+
+
+// 서비스 호출 context url 설정
+const httpInterestCategory = axiosApi("interestCategories");
+const httpLectureCategory = axiosApi("lectureCategories");
+
 const INTERESTCATEGORY_TABLE_HEAD = [
   { id: 'categoryVO.categoryId', label: '분류ID', align: 'center' },
   { id: 'categoryVO.categoryName', label: '관심분류명', align: 'left' },
@@ -148,9 +156,9 @@ export default function LectureCategory() {
 
    // 관심분류 조회
    useEffect(() => {
-    axios({
+    httpInterestCategory({
       method: 'post',
-      url: `${process.env.REACT_APP_BACK_CATEGORY_URL}/interestCategories/searchByUser`,
+      url: '/searchByUser',
       data: {
         memberId: 1
       }
@@ -163,8 +171,13 @@ export default function LectureCategory() {
 
   // 전체 카테고리 조회
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_BACK_CATEGORY_URL}/lectureCategories/searchAll`)
-    .then(res => setCATEGORYLIST(res.data))
+    httpLectureCategory({
+      method: 'get',
+      url: '/searchAll'
+    })
+    .then(
+      res => setCATEGORYLIST(res.data)
+    )
     .catch(err => console.log(err));
   }, []);
 
@@ -211,9 +224,9 @@ export default function LectureCategory() {
 
 
   const requestDelete = (selectedId, selectedCategoryId) => {
-    axios({
+    httpInterestCategory({
       method: 'delete',
-      url: `${process.env.REACT_APP_BACK_CATEGORY_URL}/interestCategories/delete`,
+      url: '/delete',
       data: {
         Id: selectedId,
         memberId: 1,
@@ -234,9 +247,9 @@ export default function LectureCategory() {
 
   const requestAddInterestCategory = (selectedCategoryId, selectedCategoryName) => {
     console.log(selectedCategoryId);
-    axios({
+    httpInterestCategory({
       method: 'post',
-      url: `${process.env.REACT_APP_BACK_CATEGORY_URL}/interestCategories/registerInterestCategory`,
+      url: '/registerInterestCategory',
       data: {
         memberId: 1,
         loginId: 'user1',

@@ -1,4 +1,4 @@
-import axios from 'axios';
+// import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import "react-datepicker/dist/react-datepicker.css";
@@ -20,10 +20,16 @@ import { Link as RouterLink } from 'react-router-dom';
 // components
 import Iconify from '../../../components/Iconify';
 import Scrollbar from '../../../components/Scrollbar';
+
+// sections
+// axios 대체 - 헤더에 JWT토큰 추가 ( import 할때 위치를 아래에 두어야 할 경우가 있습니다.)
+import axiosApi from '../../axiosApi';
+
 // ----------------------------------------------------------------------
 
 
-// ----------------------------------------------------------------------
+// 서비스 호출 context url 설정
+const httpCategory = axiosApi("lectureCategories");
 
 CategoryModifyInputBox.propTypes = {
   modifyOpen: PropTypes.bool,
@@ -63,9 +69,9 @@ export default function CategoryModifyInputBox({modifyOpen, onOpen, onClose, sel
   }
 
   const requestModify = () => {
-    axios({
+    httpCategory({
       method: 'patch',
-      url: `${process.env.REACT_APP_BACK_CATEGORY_URL}/lectureCategories/modifyCategoryName`,
+      url: '/modifyCategoryName',
       data: {
         categoryId: selectedCategoryId,
         categoryName: newCategoryName
@@ -77,7 +83,7 @@ export default function CategoryModifyInputBox({modifyOpen, onOpen, onClose, sel
         alert('해당 분류명이 이미 존재합니다.');
       } else {
         alert('수정 완료되었습니다.');
-        window.location.replace('/dashboard/lectureCategory');
+        window.location.replace('/admin/lectureCategory');
       }
     })
     .catch(err => console.log(err));
