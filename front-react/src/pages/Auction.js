@@ -1,4 +1,6 @@
-import axios from 'axios';
+// import axios from 'axios';
+
+
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
@@ -8,7 +10,7 @@ import PropTypes from 'prop-types';
 import { alpha, styled } from '@mui/material/styles';
 import moment from 'moment';
 
- 
+
 // material
 import {
   Card,
@@ -38,6 +40,8 @@ import Searchbar from '../layouts/dashboard/Searchbar';
 import DashboardNavbar from '../layouts/dashboard/DashboardNavbar';
 import { AuctionListToolbar, AuctionInputBox } from '../sections/@dashboard/auction';
 
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../sections/axiosApi';
 
 
 
@@ -51,11 +55,11 @@ import USERLIST from '../_mock/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'lectTypeNm', label: '강의분류', alignRight: false },
-  { id: 'lectName', label: '강의명', alignRight: false },
+  { id: 'categoryName', label: '강의분류', alignRight: false },
+  { id: 'title', label: '강의명', alignRight: false },
   { id: 'startAuctionDate', label: '경매시작일자', alignRight: false },
   { id: 'endAuctionDate', label: '경매종료일자', alignRight: false },
-  { id: 'cntStudent', label: '수강인원', alignRight: false },
+  { id: 'maxEnrollment', label: '수강인원(최소/최대)', alignRight: false },
   { id: 'lectCost', label: '강의료', alignRight: false },
   { id: 'auctionStatus', label: '경매상태', alignRight: false },
   // { id: 'bidCnt', label: '입찰수', alignRight: false },
@@ -64,7 +68,7 @@ const TABLE_HEAD = [
 
   { id: '' },
 ];
-
+const http = axiosApi("auctions");
 // ----------------------------------------------------------------------
 
 function descendingComparator(a, b, orderBy) {
@@ -92,7 +96,7 @@ function applySortFilter(array, comparator, query) {
   });
   console.log(array);
   if (query) {
-    return filter(array, (auction) => auction.lectName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (auction) => auction.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -194,7 +198,7 @@ export default function Auction() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - info.length) : 0;
 
   const filteredUsers = applySortFilter(info, getComparator(order, orderBy), filterName);
-  
+
   const isUserNotFound = filteredUsers.length === 0;
 
   // 경매취소 확인창
@@ -252,7 +256,7 @@ export default function Auction() {
       })
     }
 
-    
+
 
 
 
@@ -261,64 +265,101 @@ export default function Auction() {
 
   // const auctions = () => {
 
-  //   const response = axios.get("http://localhost:8084/auctions");
+  //   const response = axios.get("http://localhost:8088/auctions");
   //   console.log(response.data);
 
   //  }
 
 
   // const headers = {};
-  // const response = axios.get('http://localhost:8084/auctions', headers);
-  // response = axios.get("http://localhost:8084/auctions");
+  // const response = axios.get('http://localhost:8088/auctions', headers);
+  // response = axios.get("http://localhost:8088/auctions");
   // console.log(response.data);
   // console.log(181818181818)
 
 
   // const response = await axios.get(this.BASE_URL + '/api/hello', data);
-  const myMethod = () => {
-    axios.put(`http://localhost:8084/auctions/1/cancel`,
-    {
-      withCredentials: true // 쿠키 cors 통신 설정
-    }).then(response => {
-      console.log(response);
-    })
+  // const myMethod = () => {
+  //   axios.put(`http://localhost:8088/auctions/1/cancel`,
+  //   {
+  //     withCredentials: true // 쿠키 cors 통신 설정
+  //   }).then(response => {
+  //     console.log(response);
+  //   })
 
-  }
-
-
+  // }
 
 
-  const auctionCancel = () => {
 
-    axios({
+  const auctionCancel = async () => {
+    http({
       method: 'put',
-      url: 'http://localhost:8084/auctions/auctionCancel',
+      url: '/auctionCancel',
       data: {
         lectIds: selected, // selected에 lectId를 담고 있다.
-        // id: '1'
       }
     })
     .then(res => alertPopup(res.data))
     .catch(err => console.log(err))
   }
 
+  // const auctionCancel = () => {
+
+  //   axios({
+  //     method: 'put',
+  //     url: 'http://localhost:8088/auctions/auctionCancel',
+  //     data: {
+  //       lectIds: selected, // selected에 lectId를 담고 있다.
+  //       // id: '1'
+  //     }
+  //   })
+  //   .then(res => alertPopup(res.data))
+  //   .catch(err => console.log(err))
+  // }
 
 
-  const searchAuctionList = () => {
-    axios.get('http://localhost:8084/auctions/searchAuctionList')
+
+  // const searchAuctionList = () => {
+  //   axios.get('http://localhost:8088/auctions/searchAuctionList')
+  //   .then(res => setInfo(res.data))
+  //   .catch(err => console.log(err));
+  // }
+
+
+  const searchAuctionList = async () => {
+    http({
+      method: 'get',
+      url: '/searchAuctionList',
+    })
     .then(res => setInfo(res.data))
     .catch(err => console.log(err));
   }
 
-  useEffect(() => {
-    
-    axios(
+  // useEffect(() => {
 
-      {
-        url: 'http://localhost:8084/auctions/searchAuctionList',
-        method: "get"
-      }
-    )
+  //   axios(
+
+  //     {
+  //       url: 'http://localhost:8088/auctions/searchAuctionList',
+  //       method: "get"
+  //     }
+  //   )
+    // .then(
+    //   res => setInfo(res.data)
+    // )
+    // .catch(err => console.log(err));
+
+
+
+  // }, [])
+
+
+  useEffect(() => {
+
+    http({
+      method: 'get',
+      url: '/searchAuctionList'
+    })
     .then(
       res => setInfo(res.data)
     )
@@ -328,9 +369,20 @@ export default function Auction() {
 
   }, [])
 
+  // const onSubmit = async () => {
+  //   http({
+  //     method: 'post',
+  //     url: '/login',
+  //     data: {
+  //       email: methods.getValues().inputEmail,
+  //       pwd: methods.getValues().inputPassword,
+  //     }
+  //   })
+  // }
 
 
- 
+
+
 
 
 
@@ -344,7 +396,7 @@ export default function Auction() {
   }
 
   const dateToString = (rawDate) => {
-      
+
     if(rawDate !== null){
         return moment(rawDate).format('YYYY-MM-DD')
       }
@@ -358,9 +410,9 @@ export default function Auction() {
 
   return (
 
-    
 
-    
+
+
     <Page title="User">
 
 
@@ -369,15 +421,15 @@ export default function Auction() {
       <Container>
 
 
-    
-        
+
+
 
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             경매조회
           </Typography>
-          
+
           <DashboardNavbar onOpenSidebar={() => setOpen(false)} />
 
 {/*
@@ -394,7 +446,7 @@ export default function Auction() {
               selectedlectId={selected}
             />
 
-            {" "}     
+            {" "}
             <Button variant="outlined" onClick={confirmPopup} component={RouterLink} to="#" startIcon={<Iconify icon="ic:outline-delete" />}>
               경매취소
             </Button>
@@ -420,9 +472,9 @@ export default function Auction() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // const { id, lectName, lectStatus,  startAuctionDate, endAuctionDate} = row;
+                    // const { id, title, lectStatus,  startAuctionDate, endAuctionDate} = row;
 
-                    const { lectId, lectTypeNm, lectName, startAuctionDate,  endAuctionDate, cntStudent, lectCost, auctionStatus} = row;
+                    const { lectId, categoryName, title, startAuctionDate,  endAuctionDate, maxEnrollment, minEnrollment, lectCost, auctionStatus} = row;
 
 
                     const isItemSelected = selected.indexOf(lectId) !== -1;
@@ -440,15 +492,15 @@ export default function Auction() {
                           <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, lectId)} />
                         </TableCell>
 
-                        <TableCell align="left">{lectTypeNm}</TableCell>
+                        <TableCell align="left">{categoryName}</TableCell>
 
-   
-                        <TableCell align="left">{lectName}</TableCell>
 
-                        {/* <TableCell align="left">{lectName}</TableCell> */}
+                        <TableCell align="left">{title}</TableCell>
+
+                        {/* <TableCell align="left">{title}</TableCell> */}
                         <TableCell align="left">{dateToString(startAuctionDate)}</TableCell>
                         <TableCell align="left">{dateToString(endAuctionDate)}</TableCell>
-                        <TableCell align="left">{cntStudent}</TableCell>
+                        <TableCell align="left">{minEnrollment} / {maxEnrollment}</TableCell>
                         <TableCell align="left">{lectCost}</TableCell>
                         {/* <TableCell align="left">{auctionStatus}</TableCell> */}
 
@@ -496,9 +548,9 @@ export default function Auction() {
           />
         </Card>
       </Container>
-      
+
     </Page>
-    
+
   );
 
 }

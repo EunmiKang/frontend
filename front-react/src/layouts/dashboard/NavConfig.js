@@ -4,18 +4,13 @@ import Iconify from '../../components/Iconify';
 // ----------------------------------------------------------------------
 
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
-
+const user = JSON.parse(localStorage.getItem("user"));
 const navConfig = [
   // {
   //   title: 'dashboard',
   //   path: '/dashboard/app',
   //   icon: getIcon('eva:pie-chart-2-fill'),
   // },
-  {
-    title: '사용자정보',
-    path: '/dashboard/user',
-    icon: getIcon('eva:people-fill'),
-  },
   {
     title: '강의등록',
     path: '/dashboard/products',
@@ -70,6 +65,11 @@ const navConfig = [
     title: '로그인',
     path: '/login',
     icon: getIcon('eva:lock-fill'),
+  },
+  {
+    title: '사용자관리',
+    path: '/admin/member',
+    icon: getIcon('eva:people-fill'),
   },
   // {
   //   title: 'register',

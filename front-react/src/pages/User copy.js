@@ -1,12 +1,7 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import PropTypes from 'prop-types';
-// material
-import { alpha, styled } from '@mui/material/styles';
-
-
 // material
 import {
   Card,
@@ -22,37 +17,27 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Modal
 } from '@mui/material';
 // components
-import { confirmAlert } from 'react-confirm-alert'
 import Page from '../components/Page';
 import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import Iconify from '../components/Iconify';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar, UserMoreMenu, UserInputBox} from '../sections/@dashboard/user';
-
-// axios 대체 - 헤더에 JWT토큰 추가
-import axiosApi from '../sections/axiosApi';
-
-
+import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'memberId', label: '사용자ID', alignRight: false },
-  { id: 'name', label: '성명', alignRight: false },
-  { id: 'email', label: '이메일', alignRight: false },
-  { id: 'memberType', label: '사용자분류', alignRight: false },
-
+  { id: 'name', label: 'Name', alignRight: false },
+  { id: 'company', label: 'Company', alignRight: false },
+  { id: 'role', label: 'Role', alignRight: false },
+  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
-
-const http = axiosApi("members");
 
 // ----------------------------------------------------------------------
 
@@ -85,20 +70,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-
-
 export default function User() {
-
-  const [openRegister, setOpenRegister] = useState(false);
-
-  const handleOpenRegister = () => {
-    setOpenRegister(true);
-  };
-
-  const handleCloseRegister = () => {
-    setOpenRegister(false);
-  };
-
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -110,8 +82,6 @@ export default function User() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  const [info, setInfo] = useState([])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -156,149 +126,26 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
-  // 경매등록 확인창
-  const confirmPopup = () => {
-    // console.log(selectedlectId);
-    // console.log(selectedLectinfo);
-    confirmAlert({
-      title : '경매취소 확인',
-      message : '경매취소를 계속 하시겠습니까?',
-      buttons: [
-        {
-          label: '네',
-          onClick: () => {
-            auctionCancel();
-          }
-        },
-        {
-          label: '아니오',
-        }
-      ]
-    })
-  }
-  // 경매등록 확인창
-  const alertPopup = (inputMessage) => {
-    confirmAlert({
-      title : '확인',
-      message : inputMessage,
-      buttons: [
-        {
-          label: '확인',
-          onClick: () => searchAuctionList()
-
-        }
-      ]
-    })
-  }
-
-
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
 
-
-
-  // const auctions = () => {
-
-  //   const response = axios.get("http://localhost:8084/auctions");
-  //   console.log(response.data);
-
-  //  }
-
-
-  // const headers = {};
-  // const response = axios.get('http://localhost:8084/auctions', headers);
-  // response = axios.get("http://localhost:8084/auctions");
-  // console.log(response.data);
-  // console.log(181818181818)
-
-
-  // const response = await axios.get(this.BASE_URL + '/api/hello', data);
-  const myMethod = () => {
-    // axios.put(`http://localhost:8084/auctions/1/cancel`,
-    // {
-    //   withCredentials: true // 쿠키 cors 통신 설정
-    // }).then(response => {
-    //   console.log(response);
-    // })
-
-  }
-
-
-
-
-  const auctionCancel = () => {
-    alert(selected);
-    console.log(selected);
-    console.log(info);
-
-    // axios({
-    //   method: 'put',
-    //   url: 'http://localhost:8084/auctions/auctionCancel',
-    //   data: {
-    //     lectId: selected[0], // selected에 lectId를 담고 있다.
-    //     // id: '1'
-    //   }
-    // })
-    // .then(res => alertPopup('경매취소확인'))
-    // .catch(err => console.log(err))
-  }
-
-  const searchAuctionList = () => {
-    http.get()
-    .then(res => setInfo(res.data))
-    .catch(err => console.log(err));
-  }
-
-  useEffect(() => {
-    http.get()
-    .then(res => setInfo(res.data))
-    .catch(err => console.log(err));
-  }, [])
-
-
-
   const isUserNotFound = filteredUsers.length === 0;
-
-  // console.log(info)
-
-
-  const [modalVisible, setModalVisible] = useState(true)
-
-  const closeModal = () => {
-    setModalVisible(false)
-  }
-
-
 
   return (
     <Page title="User">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            사용자 조회
+            User
           </Typography>
-
-{/*
-          <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-          <AuctionRegisterPopover />
-          </Stack> */}
-          <div>
-            <UserInputBox
-              isOpenRegister={openRegister}
-              onOpenRegister={handleOpenRegister}
-              onCloseRegister={handleCloseRegister}
-              onAfterSaveAuction={searchAuctionList}
-              selectedLectinfo={info}
-              selectedlectId={selected}
-            />
-
-          </div>
-
+          <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
+            New User
+          </Button>
         </Stack>
 
         <Card>
-          {/* <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
+          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -307,42 +154,48 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={info.length}
+                  rowCount={USERLIST.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {info.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // const { id, lectName, lectStatus,  startAuctionDate, endAuctionDate} = row;
-
-                    const { memberId, name, email, memberType} = row;
-
-
-                    const isItemSelected = selected.indexOf(memberId) !== -1;
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                    const isItemSelected = selected.indexOf(name) !== -1;
 
                     return (
                       <TableRow
                         hover
-                        key={memberId}
+                        key={id}
                         tabIndex={-1}
                         role="checkbox"
                         selected={isItemSelected}
                         aria-checked={isItemSelected}
                       >
                         <TableCell padding="checkbox">
-                          <Checkbox checked={memberId} onChange={(event) => handleClick(event, memberId)} />
+                          <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
+                        </TableCell>
+                        <TableCell component="th" scope="row" padding="none">
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <Avatar alt={name} src={avatarUrl} />
+                            <Typography variant="subtitle2" noWrap>
+                              {name}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">
+                          <Label variant="ghost" color={(status === 'banned' && 'error') || 'success'}>
+                            {sentenceCase(status)}
+                          </Label>
                         </TableCell>
 
-                        <TableCell align="left">{memberId}</TableCell>
-                        <TableCell align="left">{name}</TableCell>
-                        <TableCell align="left">{email}</TableCell>
-                        <TableCell align="left">{memberType}</TableCell>
-
-                        {/* <TableCell align="left">{auctionStatus}</TableCell> */}
-
-
-
+                        <TableCell align="right">
+                          <UserMoreMenu />
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -369,7 +222,7 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={info.length}
+            count={USERLIST.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

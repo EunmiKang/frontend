@@ -1,10 +1,10 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { confirmAlert } from 'react-confirm-alert'
+
 
 
 
@@ -34,7 +34,8 @@ import { ColorManyPicker } from '../../../components/color-utils';
 
 import { RHFTextField } from '../../../components/hook-form';
 
-
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../../axiosApi';
 
 
 
@@ -42,7 +43,7 @@ import { RHFTextField } from '../../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
-
+const http = axiosApi("auctions");
 
 export const SORT_BY_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -109,7 +110,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
 
   // 경매등록 확인창
   const confirmPopup = () => {
-    
+
     console.log(selectedlectId);
     onCloseRegister(); // 드로우를 닫는다.
     console.log(selectedlectId);
@@ -165,7 +166,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
           {
             label: '확인',
             onClick: () => onOpenRegister()
-  
+
           }
         ]
       })
@@ -177,22 +178,22 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
           {
             label: '확인',
             onClick: () => onAfterSaveAuction()
-  
+
           }
         ]
       })
 
     }
-    
+
   }
 
   function auctionRegisterCheck (auctionId) {
     // 날짜를 체크한다. 유효한지
     // 경매상태가 AUCTION 이 맞는지..
 
-    axios(
+    http(
       {
-        url: "http://localhost:8084/auctions/searchAuction",
+        url: "/searchAuction",
         method: "get",
         params: {"auctionId": auctionId}
       }
@@ -210,9 +211,9 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
 
 
 
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/auctions/auctionRegister',
+      url: '/auctionRegister',
       data: {
         lectIds: selectedlectId,
         startAuctionDate: startDate,
@@ -222,7 +223,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
     .then(res => alertPopup(res.data))
     .catch(err => console.log(err))
 
-    
+
   }
 
 
@@ -270,7 +271,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
               <Typography variant="subtitle1" gutterBottom>
                 경매종료일자
               </Typography>
-              
+
               <DatePicker selected={endDate} onChange={date => setEndDate(date)} />
 
             </div>

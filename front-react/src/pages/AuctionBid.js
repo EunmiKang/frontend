@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
@@ -36,7 +35,8 @@ import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../sections/@dashboard/user';
 import { AuctionBidInputBox, AuctionBidSuccessBox, AuctionBidListToolbar } from '../sections/@dashboard/auctionBid';
 
-
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../sections/axiosApi';
 
 
 
@@ -47,23 +47,26 @@ import USERLIST from '../_mock/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'lectTypeNm', label: '강의분류', alignRight: false },
-  { id: 'lectName', label: '강의명', alignRight: false },
-  { id: 'startAuctionDate', label: '경매시작일자', alignRight: false },
-  { id: 'endAuctionDate', label: '경매종료일자', alignRight: false },
-  { id: 'cntStudent', label: '수강인원', alignRight: false },
+  { id: 'categoryName', label: '강의분류', alignRight: false },
+  { id: 'title', label: '강의명', alignRight: false },
+  { id: 'startAuctionDate', label: '경매\n시작일자', alignRight: false },
+  { id: 'endAuctionDate', label: '경매\n종료일자', alignRight: false },
+  { id: 'maxEnrollment', label: '수강인원(최소/최대)', alignRight: false },
   { id: 'lectCost', label: '강의료', alignRight: false },
-  { id: 'auctionStatus', label: '경매상태', alignRight: false },
+  { id: 'auctionStatus', label: '경매\n상태', alignRight: false },
   { id: 'lectureBidCnt', label: '입찰수', alignRight: false },
-  { id: 'bidMinPrice', label: '최저입찰가', alignRight: false },
-  { id: 'bidDetailList', label: '입찰상세', alignRight: false },
-  { id: 'bidSuccessBtn', label: '낙찰하기', alignRight: false },
+  { id: 'bidMinPrice', label: '최저\n입찰가', alignRight: false },
+  { id: 'bidDetailList', label: '입찰\n상세', alignRight: false },
+  { id: 'bidSuccessBtn', label: '낙찰\n요청', alignRight: false },
 
 
 
 
   { id: '' },
 ];
+
+const http = axiosApi("lectureBids");
+const httpAuction = axiosApi("auctions");
 
 // ----------------------------------------------------------------------
 
@@ -91,7 +94,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (auctionBid) => auctionBid.lectName.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (auctionBid) => auctionBid.title.toLowerCase().indexOf(query.toLowerCase()) !== -1);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -141,10 +144,13 @@ export default function User() {
   const [openBidSuccessRegister, setOpenBidSuccessRegister] = useState(false);
 
   const handleOpenBidSuccessRegister = () => {
+    setInitBidCheck(true);
+
     setOpenBidSuccessRegister(true);
   };
 
   const handleCloseBidSuccessRegister = () => {
+    setInitBidCheck(false);
     setOpenBidSuccessRegister(false);
   };
 
@@ -173,8 +179,9 @@ export default function User() {
   const [detailInfo, setDetailInfo] = useState([])
 
   const [successBidFlag, setSuccessBidFlag] = useState(false);
+  const [initBidCheck, setInitBidCheck] = useState(false);
 
-  
+
 
 
   const handleRequestSort = (event, property) => {
@@ -187,6 +194,10 @@ export default function User() {
   const onBidDetailButtonClick = (event, auctionId, auctionStatus) => {
     setSuccessBidFlag(false);
     searchBidDetailList(auctionId);
+    // alert(1);
+    // AuctionBidSuccessBox.setSelected([]);
+    // AuctionBidSuccessBox.setSelected();
+    console.log(AuctionBidSuccessBox.selected);
   }
 
 
@@ -252,7 +263,7 @@ export default function User() {
 
 
   const confirmLectureBidCancel = () => {
-    
+
     if(selected.length === 0) {
       alertPopup('입찰취소할 경매내역을 선택하여 주세요.');
       return;
@@ -268,7 +279,7 @@ export default function User() {
         }
       }
     }
-    
+
     confirmAlert({
       title : '입찰취소',
       message : '입찰을 취소하시겠습니까?',
@@ -302,27 +313,23 @@ export default function User() {
 
 
   // const response = await axios.get(this.BASE_URL + '/api/hello', data);
-  const myMethod = () => {
-    axios.put(`http://localhost:8084/auctions/1/cancel`,
-    {
-      withCredentials: true // 쿠키 cors 통신 설정
-    }).then(response => {
-      console.log(response);
-    })
+  // const myMethod = () => {
+  //   axios.put(`http://localhost:8084/auctions/1/cancel`,
+  //   {
+  //     withCredentials: true // 쿠키 cors 통신 설정
+  //   }).then(response => {
+  //     console.log(response);
+  //   })
 
-  }
-
-
+  // }
 
 
-  const lectureBidCancel = () => {
+
+  const lectureBidCancel = async () => {
     console.log(selected);
-
-
-
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/lectureBids/cancelBid',
+      url: '/cancelBid',
       data: {
         auctionIds: selected,
         memberId: 1004
@@ -332,12 +339,10 @@ export default function User() {
     .catch(err => console.log(err))
   }
 
- 
-  const searchBidDetailList = (auctionId) => {
-    axios(
-
+  const searchBidDetailList = async (auctionId) => {
+    http(
       {
-        url: "http://localhost:8084/lectureBids/searchLectureBidList/",
+        url: "/searchLectureBidList",
         method: "get",
         params: {"auctionId": auctionId}
       }
@@ -347,22 +352,22 @@ export default function User() {
       // console.log(5555),
       // console.log(detailInfo),
       setClickedAuctionId(auctionId),
+      setInitBidCheck(true),
       handleOpenBidSuccessRegister()
-
-
     )
     .catch(err => console.log(err));
 
   }
 
-  const searchAuctionList = () => {
-    axios.get(`http://localhost:8084/auctions/searchAuctionLectureBidList`,{})
+  const searchAuctionList = async () => {
+    httpAuction.get(`/searchAuctionLectureBidList`,{})
     .then(res => setInfo(res.data))
     .catch(err => console.log(err))
   }
 
+
   useEffect(() => {
-    axios.get('http://localhost:8084/auctions/searchAuctionLectureBidList')
+    httpAuction.get('/searchAuctionLectureBidList')
     .then(res => setInfo(res.data))
     .catch(err => console.log(err));
   }, [])
@@ -370,9 +375,9 @@ export default function User() {
 
   const auctionBidCancel= () => {
     console.log(info);
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/lectureBids/cancelBid',
+      url: '/cancelBid',
       data: {
         memberId: 1004,
         auctionId: 1
@@ -393,7 +398,7 @@ export default function User() {
   }
 
   const dateToString = (rawDate) => {
-      
+
     if(rawDate !== null){
         return moment(rawDate).format('YYYY-MM-DD')
       }
@@ -432,9 +437,10 @@ export default function User() {
             bidDetailInfo={detailInfo}
             selectedAuctionId={clickedAuctionId}
             successBidFlag={successBidFlag}
+            initBidCheck={initBidCheck}
           />
 
-          {" "}   
+          {" "}
           <Button variant="outlined" onClick={confirmLectureBidCancel} component={RouterLink} to="#" startIcon={<Iconify icon="ic:outline-delete" />}>
           입찰취소
               </Button>
@@ -460,9 +466,9 @@ export default function User() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    // const { id, lectName, lectStatus,  startAuctionDate, endAuctionDate} = row;
+                    // const { id, title, lectStatus,  startAuctionDate, endAuctionDate} = row;
 
-                    const { auctionId, lectId, lectTypeNm, lectName, startAuctionDate,  endAuctionDate, cntStudent, lectCost, auctionStatus, lectureBidCnt, bidMinPrice} = row;
+                    const { auctionId, lectId, categoryName, title, startAuctionDate,  endAuctionDate, maxEnrollment, minEnrollment, lectCost, auctionStatus, lectureBidCnt, bidMinPrice} = row;
 
 
                     const isItemSelected = selected.indexOf(auctionId) !== -1;
@@ -480,11 +486,11 @@ export default function User() {
                           <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, auctionId)} />
                         </TableCell>
 
-                        <TableCell align="left">{lectTypeNm}</TableCell>
-                        <TableCell align="left">{lectName} </TableCell>
+                        <TableCell align="left">{categoryName}</TableCell>
+                        <TableCell align="left">{title} </TableCell>
                         <TableCell align="left">{dateToString(startAuctionDate)}</TableCell>
                         <TableCell align="left">{moment(endAuctionDate).format('YYYY-MM-DD')}</TableCell>
-                        <TableCell align="right">{cntStudent}</TableCell>
+                        <TableCell align="left">{minEnrollment} / {maxEnrollment}</TableCell>
                         <TableCell align="right">{lectCost}</TableCell>
                         {/* <TableCell align="left">{auctionStatus}</TableCell> */}
 
@@ -496,7 +502,7 @@ export default function User() {
 
                         <TableCell align="right">{lectureBidCnt}</TableCell>
                         <TableCell align="right">{bidMinPrice}</TableCell>
-                        <TableCell align="left"><Button onClick={(event) => onBidDetailButtonClick(event, auctionId, auctionStatus)}  startIcon={<Iconify icon="ic:baseline-dvr"/>}/></TableCell>      
+                        <TableCell align="left"><Button onClick={(event) => onBidDetailButtonClick(event, auctionId, auctionStatus)}  startIcon={<Iconify icon="ic:baseline-dvr"/>}/></TableCell>
                         <TableCell align="left"><Button onClick={(event) => onBidSuccessButtonClick(event, auctionId, auctionStatus)}  startIcon={<Iconify icon="ic:baseline-gavel" />}/></TableCell>
 
 

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import Calendar from 'react-calendar';
@@ -36,13 +35,16 @@ import Scrollbar from '../../../components/Scrollbar';
 import { ColorManyPicker } from '../../../components/color-utils';
 import { RHFTextField } from '../../../components/hook-form';
 
-
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../../axiosApi';
 
 
 
 
 
 // ----------------------------------------------------------------------
+
+const http = axiosApi("lectureBids");
 
 export const SORT_BY_OPTIONS = [
   { value: 'featured', label: 'Featured' },
@@ -169,12 +171,11 @@ export default function AuctionBidInputBox({ isOpenRegister, onOpenRegister, onC
       ]
     })
   }
-
-  const auctionBidRegister = () => {
+  const auctionBidRegister = async () => {
     console.log(selectedLectinfo);
-    axios({
+    http({
       method: 'put',
-      url: 'http://localhost:8084/lectureBids/registerBid',
+      url: '/registerBid',
       data: {
         auctionIds: selectedAuctionId,
         price: bidPrice,
@@ -182,9 +183,9 @@ export default function AuctionBidInputBox({ isOpenRegister, onOpenRegister, onC
       }
     })
     .then(res => alertPopup(res.data)
-          
+
     )
-       
+
     .catch(err => console.log(err))
   }
 

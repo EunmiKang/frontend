@@ -4,32 +4,32 @@ import { useNavigate } from 'react-router-dom';
 // form
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { confirmAlert } from 'react-confirm-alert'
 // @mui
 import { Stack, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
+import axiosApi from '../../axiosApi';
 import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function RegisterForm() {
+export default function RegisterForm({ onAfterSaveAuction}) {
+  const http = axiosApi();
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
 
   const RegisterSchema = Yup.object().shape({
-    firstName: Yup.string().required('First name required'),
-    lastName: Yup.string().required('Last name required'),
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    inputName: Yup.string().required('Name required'),
+    inputEmail: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    inputPassword: Yup.string().required('Password is required'),
   });
 
   const defaultValues = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
+    inputName: '',
+    inputEmail: '',
+    inputPassword: '',
   };
 
   const methods = useForm({
@@ -42,22 +42,47 @@ export default function RegisterForm() {
     formState: { isSubmitting },
   } = methods;
 
+  const alertPopup = (inputMessage) => {
+    confirmAlert({
+      title : '사용자 등록확인',
+      message : inputMessage,
+      buttons: [
+        {
+          label: '확인',
+          onClick: () => navigate('/login', { replace: true })
+//          onClick: () => onAfterSaveAuction()
+
+        }
+      ]
+    })
+  }
+
   const onSubmit = async () => {
-    navigate('/dashboard', { replace: true });
-  };
+    http({
+      method: 'post',
+      url: '/signup',
+      data: {
+        name: methods.getValues().inputName,
+        email: methods.getValues().inputEmail,
+        pwd: methods.getValues().inputPassword,
+      }
+    })
+    .then(res => alertPopup('확인을 누르면 로그인 페이지로 이동합니다.'))
+    .catch(err => console.log(err))
+  }
+  ;
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-          <RHFTextField name="firstName" label="First name" />
-          <RHFTextField name="lastName" label="Last name" />
+          <RHFTextField name="inputName" label="Name" />
         </Stack>
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="inputEmail" label="Email address" />
 
         <RHFTextField
-          name="password"
+          name="inputPassword"
           label="Password"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
@@ -72,7 +97,7 @@ export default function RegisterForm() {
         />
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Register
+          Signup
         </LoadingButton>
       </Stack>
     </FormProvider>

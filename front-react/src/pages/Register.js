@@ -37,7 +37,7 @@ const HeaderStyle = styled('header')(({ theme }) => ({
 
 const SectionStyle = styled(Card)(({ theme }) => ({
   width: '100%',
-  maxWidth: 464,
+  maxWidth: 800,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -67,9 +67,9 @@ export default function Register() {
         <HeaderStyle>
           <Logo />
           {smUp && (
-            <Typography variant="body2" sx={{ mt: { md: -2 } }}>
+            <Typography variant="h4" sx={{ mt: { md: -2 } }}>
               Already have an account? {''}
-              <Link variant="subtitle2" component={RouterLink} to="/login">
+              <Link variant="sh5" component={RouterLink} to="/login">
                 Login
               </Link>
             </Typography>
@@ -77,18 +77,18 @@ export default function Register() {
         </HeaderStyle>
 
         {mdUp && (
-          <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Manage the job more effectively with Minimal
-            </Typography>
-            <img alt="register" src="/static/illustrations/illustration_register.png" />
-          </SectionStyle>
+        <SectionStyle>
+          <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
+            Welcome to 모두의 강의
+          </Typography>
+          <img src="/static/illustrations/img.png" alt="login" />
+        </SectionStyle>
         )}
 
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Get started absolutely free.
+              Signup 모두의 강의
             </Typography>
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Free forever. No credit card needed.</Typography>
