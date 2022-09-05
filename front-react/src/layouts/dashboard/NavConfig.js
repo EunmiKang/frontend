@@ -47,6 +47,11 @@ const navConfig = [
     icon: getIcon('ant-design:tag-filled'),
   },
   {
+    title: '관심분류',
+    path: '/dashboard/interestcategory',
+    icon: getIcon('bi:bookmark-star-fill'),
+  },
+  {
     title: '강의결제',
     path: '/dashboard/blog',
     icon: getIcon('eva:file-text-fill'),

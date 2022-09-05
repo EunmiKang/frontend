@@ -13,6 +13,7 @@ import Auction from './pages/Auction';
 import AuctionBid from './pages/AuctionBid';
 import DashboardApp from './pages/DashboardApp';
 import LectureCategory from './pages/LectureCategory';
+import InterestCategory from './pages/InterestCategory';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +30,8 @@ export default function Router() {
         { path: 'auction', element: <Auction /> },
         { path: 'auctionBid', element: <AuctionBid /> },
         { path: 'lecturecategory', element: <LectureCategory /> },
-
+        { path: 'interestcategory', element: <InterestCategory /> },
+        
       ],
     },
     {
