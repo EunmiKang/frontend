@@ -16,6 +16,7 @@ import AuctionBid from './pages/AuctionBid';
 import DashboardApp from './pages/DashboardApp';
 import LectureCategory from './pages/LectureCategory';
 import InterestCategory from './pages/InterestCategory';
+import LectureRegister from './pages/LectureRegister';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
         { path: 'products', element: <Products /> },
-        { path: 'blog', element: <Blog /> },
+        { path: 'lectureregister', element: <LectureRegister /> },
         { path: 'auction', element: <Auction /> },
         { path: 'auctionBid', element: <AuctionBid /> },
         { path: 'interestcategory', element: <InterestCategory /> },

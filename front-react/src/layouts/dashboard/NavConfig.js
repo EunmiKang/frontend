@@ -23,7 +23,7 @@ const navConfig = [
   },
   {
     title: '수강신청',
-    path: '/dashboard/products',
+    path: '/dashboard/lectureregister',
     icon: getIcon('eva:shopping-bag-fill'),
   },
   {
