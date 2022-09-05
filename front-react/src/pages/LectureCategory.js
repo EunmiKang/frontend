@@ -71,7 +71,7 @@ export default function LectureCategory() {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('categoryId');
   const [filterValue, setFilterValue] = useState('');
-  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [CATEGORYLIST, setCATEGORYLIST] = useState([]);
 
   const handleRequestSort = (event, property) => {
@@ -231,7 +231,7 @@ export default function LectureCategory() {
           </Scrollbar>
 
           <TablePagination
-            rowsPerPageOptions={[7, 10]}
+            rowsPerPageOptions={[5, 10]}
             component="div"
             count={CATEGORYLIST.length}
             rowsPerPage={rowsPerPage}
