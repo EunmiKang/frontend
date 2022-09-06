@@ -1,9 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+
 import Calendar from 'react-calendar';
 import DatePicker from "react-datepicker";
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+
 import "react-datepicker/dist/react-datepicker.css";
 import { confirmAlert } from 'react-confirm-alert'
+import TextField from '@mui/material/TextField';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 
 
@@ -228,6 +234,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
 
 
 
+
   return (
     <>
 
@@ -246,6 +253,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
           sx: { width: 280, border: 'none', overflow: 'hidden' },
         }}
       >
+
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>
           <Typography variant="subtitle1" sx={{ ml: 1 }}>
             경매등록정보 입력
@@ -258,21 +266,37 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
         <Divider />
 
         <Scrollbar>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+
           <Stack spacing={3} sx={{ p: 3 }}>
             <div>
-              <Typography variant="subtitle1" gutterBottom>
+              {/* <Typography variant="subtitle1" gutterBottom>
                 경매시작일자
-              </Typography>
-              <DatePicker selected={startDate} onChange={date => setStartDate(date)} />
-
+              </Typography> */}
+              {/* <DatePicker selected={startDate} onChange={date => setStartDate(date)} /> */}
+              <DesktopDatePicker
+                label="경매시작일자"
+                inputFormat="MM/DD/YYYY"
+                value={startDate}
+                onChange={date => setStartDate(date)}
+                renderInput={(params) => <TextField {...params} />}
+              />
             </div>
 
             <div>
-              <Typography variant="subtitle1" gutterBottom>
+              {/* <Typography variant="subtitle1" gutterBottom>
                 경매종료일자
-              </Typography>
+              </Typography> */}
 
-              <DatePicker selected={endDate} onChange={date => setEndDate(date)} />
+              <DesktopDatePicker
+                label="경매종료일자"
+                inputFormat="MM/DD/YYYY"
+                value={endDate}
+                onChange={date => setEndDate(date)}
+                renderInput={(params) => <TextField {...params} />}
+              />
+
+              {/* <DatePicker selected={endDate} onChange={date => setEndDate(date)} /> */}
 
             </div>
 
@@ -286,6 +310,7 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
 
 
           </Stack>
+          </LocalizationProvider>
         </Scrollbar>
 
         <Box sx={{ p: 3 }}>

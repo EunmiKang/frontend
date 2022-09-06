@@ -235,7 +235,7 @@ export default function AuctionBidInputBox({ isOpenRegister, onOpenRegister, onC
               </Typography>
             </div>
             <div>
-              <TextField id="bidPrice" label="Outlined" variant="outlined" onChange={(event) => setBidPrice(event.target.value)}/>
+              <TextField id="bidPrice" label="입찰가" variant="outlined" onChange={(event) => setBidPrice(event.target.value)}/>
 
               {/* <RHFTextField name="categoryName" label="분류명"/> */}
 
