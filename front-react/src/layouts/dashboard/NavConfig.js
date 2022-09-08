@@ -29,12 +29,12 @@ const navConfig = [
   {
     title: '강의경매',
     path: '/dashboard/auction',
-    icon: getIcon('eva:shopping-bag-fill'),
+    icon: getIcon('ic:baseline-gavel'),
   },
   {
     title: '경매입찰',
     path: '/dashboard/auctionBid',
-    icon: getIcon('eva:shopping-bag-fill'),
+    icon: getIcon('ic:baseline-monetization-on'),
   },
   {
     title: '강의분류',

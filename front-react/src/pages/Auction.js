@@ -50,6 +50,7 @@ import axiosApi from '../sections/axiosApi';
 
 // mock
 import USERLIST from '../_mock/user';
+import User from './User';
 
 
 // ----------------------------------------------------------------------
@@ -62,6 +63,10 @@ const TABLE_HEAD = [
   { id: 'maxEnrollment', label: '수강인원(최소/최대)', alignRight: false },
   { id: 'lectCost', label: '강의료', alignRight: false },
   { id: 'auctionStatus', label: '경매상태', alignRight: false },
+  { id: 'auctionRegUserName', label: '등록자', alignRight: false },
+  { id: 'auctionRegUserId', label: '등록자ID', alignRight: false },
+
+
   // { id: 'bidCnt', label: '입찰수', alignRight: false },
   // { id: 'lowPrice', label: '최저입찰가', alignRight: false },
 
@@ -70,6 +75,7 @@ const TABLE_HEAD = [
 ];
 const http = axiosApi("auctions");
 // ----------------------------------------------------------------------
+const user = JSON.parse(localStorage.getItem("user"));
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -213,6 +219,11 @@ export default function Auction() {
     for(let i=0; i<selected.length; i+=1){
       for(let j = 0; j<info.length; j+=1){
         if(selected[i] === info[j].lectId){
+          if(info[j].auctionRegUserId!==user.MemberId){
+            alertPopup('등록자가 아니면 취소 권한이 없습니다.');
+            return;
+
+          }
           if(info[j].auctionStatus==='' || info[j].auctionStatus===null){
             alertPopup('경매가 등록되어 있지 않습니다.');
             return;
@@ -297,6 +308,8 @@ export default function Auction() {
       url: '/auctionCancel',
       data: {
         lectIds: selected, // selected에 lectId를 담고 있다.
+        auctionRegUserId: user.memberId
+
       }
     })
     .then(res => alertPopup(res.data))
@@ -361,7 +374,8 @@ export default function Auction() {
       url: '/searchAuctionList'
     })
     .then(
-      res => setInfo(res.data)
+      res => setInfo(res.data), 
+      res => console.log(res.data)
     )
     .catch(err => console.log(err));
 
@@ -459,7 +473,7 @@ export default function Auction() {
           <AuctionListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
+            <TableContainer sx={{ minWidth: 1000 }}>
               <Table>
                 <UserListHead
                   order={order}
@@ -474,7 +488,7 @@ export default function Auction() {
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     // const { id, title, lectStatus,  startAuctionDate, endAuctionDate} = row;
 
-                    const { lectId, categoryName, title, startAuctionDate,  endAuctionDate, maxEnrollment, minEnrollment, lectCost, auctionStatus} = row;
+                    const { lectId, categoryName, title, startAuctionDate,  endAuctionDate, maxEnrollment, minEnrollment, lectCost, auctionStatus, auctionRegUserName, auctionRegUserId} = row;
 
 
                     const isItemSelected = selected.indexOf(lectId) !== -1;
@@ -509,6 +523,8 @@ export default function Auction() {
                            {auctionStatus}
                           </Label>
                         </TableCell>
+                        <TableCell align="left">{auctionRegUserName}</TableCell>
+                        <TableCell align="left">{auctionRegUserId}</TableCell>
 
                         {/* <TableCell align="left">{bidCnt}</TableCell>
                         <TableCell align="left">{lowPrice}</TableCell> */}

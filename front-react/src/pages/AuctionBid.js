@@ -49,15 +49,15 @@ import USERLIST from '../_mock/user';
 const TABLE_HEAD = [
   { id: 'categoryName', label: '강의분류', alignRight: false },
   { id: 'title', label: '강의명', alignRight: false },
-  { id: 'startAuctionDate', label: '경매\n시작일자', alignRight: false },
-  { id: 'endAuctionDate', label: '경매\n종료일자', alignRight: false },
+  { id: 'startAuctionDate', label: '경매시작일자', alignRight: false },
+  { id: 'endAuctionDate', label: '경매종료일자', alignRight: false },
   { id: 'maxEnrollment', label: '수강인원(최소/최대)', alignRight: false },
   { id: 'lectCost', label: '강의료', alignRight: false },
-  { id: 'auctionStatus', label: '경매\n상태', alignRight: false },
+  { id: 'auctionStatus', label: '경매상태', alignRight: false },
   { id: 'lectureBidCnt', label: '입찰수', alignRight: false },
-  { id: 'bidMinPrice', label: '최저\n입찰가', alignRight: false },
-  { id: 'bidDetailList', label: '입찰\n상세', alignRight: false },
-  { id: 'bidSuccessBtn', label: '낙찰\n요청', alignRight: false },
+  { id: 'bidMinPrice', label: '최저입찰가', alignRight: false },
+  { id: 'bidDetailList', label: '입찰상세', alignRight: false },
+  { id: 'bidSuccessBtn', label: '낙찰요청', alignRight: false },
 
 
 
@@ -67,6 +67,7 @@ const TABLE_HEAD = [
 
 const http = axiosApi("lectureBids");
 const httpAuction = axiosApi("auctions");
+const user = JSON.parse(localStorage.getItem("user"));
 
 // ----------------------------------------------------------------------
 
@@ -327,12 +328,13 @@ export default function User() {
 
   const lectureBidCancel = async () => {
     console.log(selected);
+
     http({
       method: 'put',
       url: '/cancelBid',
       data: {
         auctionIds: selected,
-        memberId: 1004
+        bidRegUserId: user.memberId
       }
     })
     .then(res => alertPopup(res.data))
@@ -453,8 +455,9 @@ export default function User() {
           <AuctionBidListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
+            <TableContainer sx={{ minWidth: 1000 }}>
               <Table>
+                
                 <UserListHead
                   order={order}
                   orderBy={orderBy}

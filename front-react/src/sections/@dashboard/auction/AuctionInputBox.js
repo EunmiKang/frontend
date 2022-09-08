@@ -91,6 +91,8 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showPassword, setShowPassword] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
+  console.log("user===>",user);
 
 
   const bidRegisterOpen = () => {
@@ -215,13 +217,15 @@ export default function AuctionInputBox({ isOpenRegister, onOpenRegister, onClos
   const auctionRegister = () => {
 
 
-
+    alert(user.memberId);
 
     http({
       method: 'put',
       url: '/auctionRegister',
       data: {
         lectIds: selectedlectId,
+        // auctionRegUserId: user.name
+        auctionRegUserId: user.memberId,
         startAuctionDate: startDate,
         endAuctionDate: endDate,
       }
