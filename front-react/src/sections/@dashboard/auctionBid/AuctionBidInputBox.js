@@ -86,6 +86,7 @@ export default function AuctionBidInputBox({ isOpenRegister, onOpenRegister, onC
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [bidPrice, setBidPrice] = useState(0);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const bidRegisterOpen = () => {
 
@@ -179,7 +180,7 @@ export default function AuctionBidInputBox({ isOpenRegister, onOpenRegister, onC
       data: {
         auctionIds: selectedAuctionId,
         price: bidPrice,
-        memberId: 1004
+        bidRegUserId: user.memberId
       }
     })
     .then(res => alertPopup(res.data)

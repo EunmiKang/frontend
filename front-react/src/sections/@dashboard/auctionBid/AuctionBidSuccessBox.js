@@ -63,6 +63,8 @@ import axiosApi from '../../axiosApi';
 // ----------------------------------------------------------------------
 
 const http = axiosApi("lectureBids");
+const user = JSON.parse(localStorage.getItem("user"));
+
 
 
 export const SORT_BY_OPTIONS = [
@@ -130,9 +132,10 @@ function descendingComparator(a, b, orderBy) {
 }
 
 const TABLE_HEAD = [
-  { id: 'lectureBidId', label: '입찰NO', alignRight: false },
-  { id: 'memberId', label: '회원ID', alignRight: false },
-  { id: 'memberName', label: '회원명', alignRight: false },
+  { id: 'bidRegUserId', label: '회원ID', alignRight: false },
+  { id: 'bidRegUserId', label: '회원 이메일', alignRight: false },
+
+  { id: 'bidRegUserName', label: '회원명', alignRight: false },
   { id: 'price', label: '입찰가', alignRight: false },
   { id: 'status', label: '상태', alignRight: false },
 
@@ -340,7 +343,8 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
       url: '/successLectureBid',
       data: {
         id: saveSelected[0],
-        auctionId: selectedAuctionId
+        auctionId: selectedAuctionId,
+        bidSuccessReqUserId: user.memberId
       }
     })
     .then(res => alertPopup(res.data))
@@ -395,7 +399,7 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
                 {bidDetailInfo.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                   // const { id, title, lectStatus,  startAuctionDate, endAuctionDate} = row;
 
-                  const { lectureBidId, memberId, memberName, price, status} = row;
+                  const { lectureBidId, bidRegUserId, bidRegUserEmail, bidRegUserName, price, status} = row;
 
 
                   const isItemSelected = selected.indexOf(lectureBidId) !== -1;
@@ -413,9 +417,10 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
                         <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, lectureBidId)} />
                       </TableCell>
 
-                      <TableCell align="left">{lectureBidId}</TableCell>
-                      <TableCell align="left">{memberId} </TableCell>
-                      <TableCell align="left">{memberName}</TableCell>
+                      {/* <TableCell align="left">{lectureBidId}</TableCell> */}
+                      <TableCell align="left">{bidRegUserId} </TableCell>
+                      <TableCell align="left">{bidRegUserName}</TableCell>
+                      <TableCell align="left">{bidRegUserEmail}</TableCell>
                       <TableCell align="left">{price}</TableCell>
                       <TableCell align="left">
                           <Label variant="ghost" color={((status === 'FAIL')&& 'error') || 'success'}>
