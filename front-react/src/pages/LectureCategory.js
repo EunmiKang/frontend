@@ -110,6 +110,28 @@ export default function LectureCategory() {
     .catch(err => console.log(err));
   }, []);
 
+  const searchCategoryList = async () => {
+    httpCategory({
+      method: 'get',
+      url: '/searchAll'
+    })
+    .then(res => setCATEGORYLIST(res.data))
+    .catch(err => console.log(err));
+  }
+
+  const alertPopup = (inputMessage) => {
+    confirmAlert({
+      title : '확인',
+      message : inputMessage,
+      buttons: [
+        {
+          label: '확인',
+          onClick: () => searchCategoryList()
+        }
+      ]
+    })
+  }
+
   // ---------- modal창 관련 ------------ //
   const [modifyOpen, setModifyOpen] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState();
@@ -159,10 +181,9 @@ export default function LectureCategory() {
     .then(res =>{
       const result = res.data;
       if(result === -1) {
-        alert('해당 분류가 존재하지 않습니다.');
+        alertPopup('해당 분류가 존재하지 않습니다.');
       } else {
-        alert('삭제되었습니다.');
-        window.location.replace('/admin/lectureCategory');
+        alertPopup('삭제되었습니다.');
       }
     })
     .catch(err => console.log(err));
@@ -173,12 +194,13 @@ export default function LectureCategory() {
     <Page title="Lecture Category">
       <Container>
         <CategoryModifyInputBox
-              modifyOpen={modifyOpen}
-              onOpen={handleModifyOpen}
-              onClose={handleModifyClose}
-              selectedCategoryId={selectedCategoryId}
-              selectedCategoryName={selectedCategoryName}
-            />
+          modifyOpen={modifyOpen}
+          onOpen={handleModifyOpen}
+          onClose={handleModifyClose}
+          selectedCategoryId={selectedCategoryId}
+          selectedCategoryName={selectedCategoryName}
+          alertPopup={alertPopup}
+        />
 
         <Stack direction="row">
           <Typography variant="h4" gutterBottom>
@@ -186,7 +208,9 @@ export default function LectureCategory() {
           </Typography>
         </Stack>
 
-        <RegisterCategoryForm />
+        <RegisterCategoryForm
+          alertPopup={alertPopup}
+        />
 
         <Card style={{width: '80%', margin: 'auto'}}>
           <CategoryListToolbar filterValue={filterValue} onFilterValue={handleFilterByValue} />

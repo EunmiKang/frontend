@@ -20,7 +20,7 @@ import axiosApi from '../axiosApi';
 // 서비스 호출 context url 설정
 const httpCategory = axiosApi("lectureCategories");
 
-export default function RegisterCategoryForm() {
+export default function RegisterCategoryForm({alertPopup}) {
 
   const navigate = useNavigate();
 
@@ -56,10 +56,9 @@ export default function RegisterCategoryForm() {
       const result = res.data;
       // console.log(result);
       if(result === -1) {
-        alert('해당 분류가 이미 존재합니다.');
+        alertPopup('해당 분류가 이미 존재합니다.');
       } else {
-        alert('등록되었습니다.');
-        window.location.replace('/admin/lectureCategory');
+        alertPopup('등록되었습니다.');
       }
     })
     .catch(err => console.log(err));

@@ -30,6 +30,9 @@ import { CategoryListHead, CategoryListToolbar } from '../sections/@dashboard/le
 import axiosApi from '../sections/axiosApi';
 
 
+import account from '../_mock/account';
+
+
 // -------------------------------------------------------------------
 
 
@@ -160,7 +163,7 @@ export default function LectureCategory() {
       method: 'post',
       url: '/searchByUser',
       data: {
-        memberId: 1
+        email: account.email
       }
     })
     .then(
@@ -180,6 +183,33 @@ export default function LectureCategory() {
     )
     .catch(err => console.log(err));
   }, []);
+
+  const searchInterestCategoryList = async () => {
+    httpInterestCategory({
+      method: 'post',
+      url: '/searchByUser',
+      data: {
+        email: account.email
+      }
+    })
+    .then(
+      res => setINTERESTCATEGORYLIST(res.data)
+    )
+    .catch(err => console.log(err));
+  }
+
+  const alertPopup = (inputMessage) => {
+    confirmAlert({
+      title : '확인',
+      message : inputMessage,
+      buttons: [
+        {
+          label: '확인',
+          onClick: () => searchInterestCategoryList()
+        }
+      ]
+    })
+  }
 
   // ---------- modal창 관련 ------------ //
 
@@ -229,17 +259,16 @@ export default function LectureCategory() {
       url: '/delete',
       data: {
         Id: selectedId,
-        memberId: 1,
+        email: account.email,
         categoryId: selectedCategoryId
       }
     })
     .then(res =>{
       const result = res.data;
       if(result === -1) {
-        alert('해당 관심분류가 존재하지 않습니다.');
+        alertPopup('해당 관심분류가 존재하지 않습니다.');
       } else {
-        alert('관심분류 해제되었습니다.');
-        window.location.replace('/dashboard/interestCategory');
+        alertPopup('관심분류 해제되었습니다.');
       }
     })
     .catch(err => console.log(err));
@@ -251,10 +280,9 @@ export default function LectureCategory() {
       method: 'post',
       url: '/registerInterestCategory',
       data: {
-        memberId: 1,
-        loginId: 'user1',
-        memberName: '강길동',
-        mobile: '010-0000-0000',
+        memberId: account.memberId,
+        memberName: account.displayName,
+        email: account.email,
         categoryId: selectedCategoryId,
         categoryName: selectedCategoryName
       }
@@ -262,10 +290,9 @@ export default function LectureCategory() {
     .then(res =>{
       const result = res.data;
       if(result === -1) {
-        alert('이미 관심분류로 등록되어 있습니다.');
+        alertPopup('이미 관심분류로 등록되어 있습니다.');
       } else {
-        alert('관심분류에 추가되었습니다.');
-        window.location.replace('/dashboard/interestCategory');
+        alertPopup('관심분류에 추가되었습니다.');
       }
     })
     .catch(err => console.log(err));
@@ -352,8 +379,8 @@ export default function LectureCategory() {
                   <Table>
                     <colgroup>
                       <col width="20%" />
-                      <col width="70%" />
-                      <col width="10%" />
+                      <col width="50%" />
+                      <col width="30%" />
                     </colgroup>
 
                     <CategoryListHead
@@ -377,7 +404,7 @@ export default function LectureCategory() {
                             <TableCell align="center">{categoryId}</TableCell>
                             <TableCell align="left">{categoryName}</TableCell>
                             <TableCell >
-                              <Button onClick={()=>confirmAddPopup(categoryId, categoryName)}>추가</Button>
+                              <Button onClick={()=>confirmAddPopup(categoryId, categoryName)}>관심분류 추가</Button>
                             </TableCell>
 
                           </TableRow>

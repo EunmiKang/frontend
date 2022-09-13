@@ -38,8 +38,7 @@ CategoryModifyInputBox.propTypes = {
 };
 
 
-
-export default function CategoryModifyInputBox({modifyOpen, onOpen, onClose, selectedCategoryId, selectedCategoryName}) {
+export default function CategoryModifyInputBox({modifyOpen, onOpen, onClose, selectedCategoryId, selectedCategoryName, alertPopup}) {
 
   const [newCategoryName, setNewCategoryName] = useState('');
 
@@ -80,10 +79,9 @@ export default function CategoryModifyInputBox({modifyOpen, onOpen, onClose, sel
     .then(res =>{
       const result = res.data;
       if(result === -1) {
-        alert('해당 분류명이 이미 존재합니다.');
+        alertPopup('해당 분류명이 이미 존재합니다.');
       } else {
-        alert('수정 완료되었습니다.');
-        window.location.replace('/admin/lectureCategory');
+        alertPopup('수정 완료되었습니다.');
       }
     })
     .catch(err => console.log(err));
