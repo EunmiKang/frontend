@@ -219,7 +219,9 @@ export default function Auction() {
     for(let i=0; i<selected.length; i+=1){
       for(let j = 0; j<info.length; j+=1){
         if(selected[i] === info[j].lectId){
-          if(info[j].auctionRegUserId!==user.MemberId){
+          if(info[j].auctionRegUserId!==user.memberId){
+            console.log(user);
+
             alertPopup('등록자가 아니면 취소 권한이 없습니다.');
             return;
 
@@ -374,7 +376,7 @@ export default function Auction() {
       url: '/searchAuctionList'
     })
     .then(
-      res => setInfo(res.data), 
+      res => setInfo(res.data),
       res => console.log(res.data)
     )
     .catch(err => console.log(err));

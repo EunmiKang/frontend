@@ -2,9 +2,12 @@ import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 // components
 import Page from '../components/Page';
 import Iconify from '../components/Iconify';
+
+
 // sections
 import {
   AppTasks,
@@ -16,38 +19,131 @@ import {
   AppWidgetSummary,
   AppCurrentSubject,
   AppConversionRates,
+  AppAuctionStatics,
 } from '../sections/@dashboard/app';
 
+// axios 대체 - 헤더에 JWT토큰 추가
+import axiosApi from '../sections/axiosApi';
+
 // ----------------------------------------------------------------------
+const http = axiosApi("auctions");
 
 export default function DashboardApp() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   const theme = useTheme();
+
+  const [info, setInfo] = useState([])
+  const [weekDay, setWeekDay] = useState([])
+  const [auctionStatics, setAuctionStatics] = useState([])
+
+  const [bidStatics, setBidStatics] = useState([])
+
+  const [successStatics, setSuccessStatics] = useState([])
+  const [todayAuctionCount, setTodayAuctionCount] = useState([])
+
+
+
+  const searchAuctionStatics = async () => {
+    http({
+      method: 'get',
+      url: '/searchAuctionStatics',
+    })
+    .then(res => successSearchAuctionStatics(res.data))
+
+    .catch(err => console.log(err));
+  }
+
+  const successSearchAuctionStatics = async (data) => {
+    console.log(data);
+    const tempWeekDay = [];
+    for(let i = 0 ;i<data.length; i+=1){
+      console.log(i);
+
+      tempWeekDay[i] = data[i].regDate;
+      // weekDay[i] = data[i].regDate;
+      auctionStatics[i] = data[i].auctionCount;
+      bidStatics[i] = data[i].bidCount;
+      successStatics[i] = data[i].successCount;
+
+
+
+    }
+    // 오늘 데이터는 별도 세팅 필요
+    setTodayAuctionCount(data[data.length-1].auctionCount);
+    setWeekDay(tempWeekDay);
+
+    console.log(tempWeekDay);
+    console.log(auctionStatics);
+    console.log(bidStatics);
+    console.log(successStatics);
+
+    // console.log(data[i]);
+  }
+
+
+  useEffect(() => {
+    searchAuctionStatics();
+    // 아래로 계속 호출~ 필요한 함수
+
+
+  }, [])
+
 
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+        <Typography variant="h5" sx={{ mb: 5 }}>
+        안녕하세요? {user.name}님.
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="오늘 접속자수" total={7} icon={'ic:outline-sentiment-satisfied-alt'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="가입자수" total={999} color="info" icon={'ic:baseline-group-add'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary title="오늘의 경매수" total={todayAuctionCount} color="warning" icon={'ic:baseline-gavel'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="오늘의 강좌수" total={234} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
+
 
           <Grid item xs={12} md={6} lg={8}>
+            <AppAuctionStatics
+              title="금주 강의 경매 현황"
+              subheader="경매/입찰/낙찰"
+              chartLabels={weekDay}
+              chartData={[
+                {
+                  name: '경매건수',
+                  type: 'column',
+                  fill: 'solid',
+                  data: auctionStatics,
+                },
+                {
+                  name: '입찰건수',
+                  type: 'column',
+                  fill: 'solid',
+                  data: bidStatics,
+                },
+                {
+                  name: '낙찰건수',
+                  type: 'column',
+                  fill: 'solid',
+                  data: successStatics,
+                },
+              ]}
+            />
+          </Grid>
+
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Website Visits"
               subheader="(+43%) than last year"
@@ -85,16 +181,18 @@ export default function DashboardApp() {
                 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
+              title="금주 인기분야 TOP5"
               chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
+                { label: 'Cloud', value: 4344 },
+                { label: 'Office', value: 5435 },
+                { label: '프로그래밍', value: 1443 },
+                { label: '영어', value: 4443 },
+                { label: '일어', value: 500 },
+
               ]}
               chartColors={[
                 theme.palette.primary.main,
