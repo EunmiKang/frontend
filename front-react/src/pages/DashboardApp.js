@@ -27,6 +27,7 @@ import axiosApi from '../sections/axiosApi';
 
 // ----------------------------------------------------------------------
 const http = axiosApi("auctions");
+const httpInterestCategory = axiosApi("interestCategories")
 
 export default function DashboardApp() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -41,6 +42,7 @@ export default function DashboardApp() {
 
   const [successStatics, setSuccessStatics] = useState([])
   const [todayAuctionCount, setTodayAuctionCount] = useState([])
+  const [top5InterestCategoryList, setTop5InterestCategoryList] = useState([])
 
 
 
@@ -73,18 +75,25 @@ export default function DashboardApp() {
     setTodayAuctionCount(data[data.length-1].auctionCount);
     setWeekDay(tempWeekDay);
 
-    console.log(tempWeekDay);
-    console.log(auctionStatics);
-    console.log(bidStatics);
-    console.log(successStatics);
 
     // console.log(data[i]);
   }
+
+  const getTop5InterestCategories = async () => {
+    httpInterestCategory({
+      method: 'get',
+      url: '/top5InterestCategories',
+    })
+    .then(res => setTop5InterestCategoryList(res.data))
+    .catch(err => console.log(err));
+}
+
 
 
   useEffect(() => {
     searchAuctionStatics();
     // 아래로 계속 호출~ 필요한 함수
+    getTop5InterestCategories();
 
 
   }, [])
@@ -185,15 +194,14 @@ export default function DashboardApp() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="금주 인기분야 TOP5"
-              chartData={[
-                { label: 'Cloud', value: 4344 },
-                { label: 'Office', value: 5435 },
-                { label: '프로그래밍', value: 1443 },
-                { label: '영어', value: 4443 },
-                { label: '일어', value: 500 },
+              title="인기분야 TOP5"
 
-              ]}
+
+              chartData={
+                top5InterestCategoryList.map((item) => {
+                  return { label: item.categoryName, value: item.categoryCnt };
+                })
+              }
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.chart.blue[0],
