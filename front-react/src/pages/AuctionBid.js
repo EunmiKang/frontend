@@ -137,7 +137,17 @@ export default function User() {
     })
   }
 
+  const getAuctionStatusValue = (auctionStatus) => {
+    switch (auctionStatus){
+      case "AUCTION" : return "경매중"
+      case "BEFORE_AUCTION" : return "경매시작전"
+      case "AFTER_AUCTION" : return "경매종료"
+      case "BID_SUCCESS" : return "경매완료"
+      default : return "미등록"
+    }
 
+
+  }
 
 
 
@@ -457,7 +467,7 @@ export default function User() {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 1000 }}>
               <Table>
-                
+
                 <UserListHead
                   order={order}
                   orderBy={orderBy}
@@ -499,7 +509,7 @@ export default function User() {
 
                          <TableCell align="left">
                          <Label variant="ghost" color={((auctionStatus === 'AFTER_AUCTION' || auctionStatus === 'BEFORE_AUCTION' || auctionStatus === 'BID_SUCCESS')&& 'error') || 'success'}>
-                           {auctionStatus}
+                           {getAuctionStatusValue(auctionStatus)}
                           </Label>
                         </TableCell>
 

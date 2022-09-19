@@ -351,9 +351,15 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
     .catch(err => console.log(err))
   }
 
+  const getBidStatusValue = (bidStatus) => {
+    switch (bidStatus){
+      case "SUCCESS" : return "낙찰"
+      case "FAIL" : return "유찰"
+      default : return "입찰중"
+    }
 
 
-
+  }
 
   return (
     <>
@@ -424,7 +430,7 @@ export default function AuctionBidSuccessBox({ isOpenBidSuccessRegister, onOpenB
                       <TableCell align="left">{price}</TableCell>
                       <TableCell align="left">
                           <Label variant="ghost" color={((status === 'FAIL')&& 'error') || 'success'}>
-                             {status}
+                             {getBidStatusValue(status)}
                           </Label>
                       </TableCell>
                     </TableRow>

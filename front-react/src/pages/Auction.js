@@ -207,6 +207,18 @@ export default function Auction() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+
+  const getAuctionStatusValue = (auctionStatus) => {
+    switch (auctionStatus){
+      case "AUCTION" : return "경매중"
+      case "BEFORE_AUCTION" : return "경매시작전"
+      case "AFTER_AUCTION" : return "경매종료"
+      case "BID_SUCCESS" : return "경매완료"
+      default : return "미등록"
+    }
+
+
+  }
   // 경매취소 확인창
   const confirmPopup = () => {
     console.log(selected);
@@ -219,16 +231,17 @@ export default function Auction() {
     for(let i=0; i<selected.length; i+=1){
       for(let j = 0; j<info.length; j+=1){
         if(selected[i] === info[j].lectId){
+
+          if(info[j].auctionStatus==='' || info[j].auctionStatus===null){
+            alertPopup('경매가 등록되어 있지 않습니다.');
+            return;
+          }
           if(info[j].auctionRegUserId!==user.memberId){
             console.log(user);
 
             alertPopup('등록자가 아니면 취소 권한이 없습니다.');
             return;
 
-          }
-          if(info[j].auctionStatus==='' || info[j].auctionStatus===null){
-            alertPopup('경매가 등록되어 있지 않습니다.');
-            return;
           }
         }
       }
@@ -522,7 +535,7 @@ export default function Auction() {
 
                          <TableCell align="left">
                           <Label variant="ghost" color={((auctionStatus === 'AFTER_AUCTION' || auctionStatus === 'BEFORE_AUCTION'|| auctionStatus === 'BID_SUCCESS')&& 'error') || 'success'}>
-                           {auctionStatus}
+                           {getAuctionStatusValue(auctionStatus)}
                           </Label>
                         </TableCell>
                         <TableCell align="left">{auctionRegUserName}</TableCell>
