@@ -28,6 +28,8 @@ import axiosApi from '../sections/axiosApi';
 // ----------------------------------------------------------------------
 const http = axiosApi("auctions");
 const httpInterestCategory = axiosApi("interestCategories")
+const httpLecture = axiosApi("lecture")
+
 
 export default function DashboardApp() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -43,6 +45,7 @@ export default function DashboardApp() {
   const [successStatics, setSuccessStatics] = useState([])
   const [todayAuctionCount, setTodayAuctionCount] = useState([])
   const [top5InterestCategoryList, setTop5InterestCategoryList] = useState([])
+  const [lectureCount, setLectureCount] = useState([])
 
 
 
@@ -89,13 +92,22 @@ export default function DashboardApp() {
 }
 
 
+const getLectureCount = async () => {
+  httpLecture({
+    method: 'get',
+    url: '/lecturesubs/lectureCount',
+  })
+  .then(res => console.log(res.data))
+  .catch(err => console.log(err));
+}
+
 
   useEffect(() => {
-    searchAuctionStatics();
     // 아래로 계속 호출~ 필요한 함수
+    searchAuctionStatics();
     getTop5InterestCategories();
-
-
+    // 404 에러 발생해서 주석 <--
+    // getLectureCount();
   }, [])
 
 
@@ -120,7 +132,7 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="오늘의 강좌수" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="오늘의 강좌수" total={lectureCount} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
 
 
