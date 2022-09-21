@@ -103,7 +103,7 @@ const getLectureCount = async () => {
 
 
   useEffect(() => {
-    // 아래로 계속 호출~ 필요한 함수
+    // 아래로 계속 호출~ 필요한  함수
     searchAuctionStatics();
     getTop5InterestCategories();
     // 404 에러 발생해서 주석 <--
