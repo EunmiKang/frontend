@@ -29,7 +29,7 @@ import axiosApi from '../sections/axiosApi';
 const http = axiosApi("auctions");
 const httpInterestCategory = axiosApi("interestCategories")
 const httpLecture = axiosApi("lecture")
-
+const httpMember = axiosApi("members")
 
 export default function DashboardApp() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -46,6 +46,7 @@ export default function DashboardApp() {
   const [todayAuctionCount, setTodayAuctionCount] = useState([])
   const [top5InterestCategoryList, setTop5InterestCategoryList] = useState([])
   const [lectureCount, setLectureCount] = useState([])
+  const [memberCount, setMemberCount] = useState([])
 
 
 
@@ -97,15 +98,26 @@ const getLectureCount = async () => {
     method: 'get',
     url: '/lecturesubs/lectureCount',
   })
-  .then(res => console.log(res.data))
+  .then(res => setLectureCount(res.data))
   .catch(err => console.log(err));
 }
+
+const getMemberTotalCount = async () => {
+  httpMember({
+    method: 'get',
+    url: '/totalcount',
+  })
+  .then(res => setMemberCount(res.data))
+  .catch(err => console.log(err));
+}
+
 
 
   useEffect(() => {
     // 아래로 계속 호출~ 필요한  함수
     searchAuctionStatics();
     getTop5InterestCategories();
+    getMemberTotalCount();
     // 404 에러 발생해서 주석 <--
     // getLectureCount();
   }, [])
@@ -124,7 +136,7 @@ const getLectureCount = async () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="가입자수" total={999} color="info" icon={'ic:baseline-group-add'} />
+            <AppWidgetSummary title="가입자수" total={memberCount} color="info" icon={'ic:baseline-group-add'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
