@@ -44,6 +44,8 @@ export default function DashboardApp() {
 
   const [successStatics, setSuccessStatics] = useState([])
   const [todayAuctionCount, setTodayAuctionCount] = useState([])
+  const [todaySuccessBidCount, setTodaySuccessBidCount] = useState([])
+
   const [top5InterestCategoryList, setTop5InterestCategoryList] = useState([])
   const [lectureCount, setLectureCount] = useState([])
   const [memberCount, setMemberCount] = useState([])
@@ -77,6 +79,7 @@ export default function DashboardApp() {
     }
     // 오늘 데이터는 별도 세팅 필요
     setTodayAuctionCount(data[data.length-1].auctionCount);
+    setTodaySuccessBidCount(data[data.length-1].successCount);
     setWeekDay(tempWeekDay);
 
 
@@ -94,6 +97,7 @@ export default function DashboardApp() {
 
 
 const getLectureCount = async () => {
+
   httpLecture({
     method: 'get',
     url: '/lecturesubs/lectureCount',
@@ -115,11 +119,11 @@ const getMemberTotalCount = async () => {
 
   useEffect(() => {
     // 아래로 계속 호출~ 필요한  함수
+    getLectureCount();
     searchAuctionStatics();
     getTop5InterestCategories();
     getMemberTotalCount();
     // 404 에러 발생해서 주석 <--
-    // getLectureCount();
   }, [])
 
 
@@ -131,12 +135,14 @@ const getMemberTotalCount = async () => {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="오늘 접속자수" total={7} icon={'ic:outline-sentiment-satisfied-alt'} />
-          </Grid>
+
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="가입자수" total={memberCount} color="info" icon={'ic:baseline-group-add'} />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="오늘의 강좌수" total={8} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -144,7 +150,7 @@ const getMemberTotalCount = async () => {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="오늘의 강좌수" total={lectureCount} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="오늘의 낙찰수" total={todaySuccessBidCount} icon={'ic:outline-sentiment-satisfied-alt'} />
           </Grid>
 
 
