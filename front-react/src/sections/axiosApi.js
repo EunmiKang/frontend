@@ -2,8 +2,8 @@ import axios from "axios";
 // import jwt_decode from "jwt-decode";
 
 // const mode = import.meta.env.VITE_RUN_ENV || "dev";
-// const baseUrl = import.meta.env.VITE_API_URI ;
-const baseUrl = "http://localhost:8088" ;
+const baseUrl = process.env.REACT_APP_API_URI ;
+
 
 const axiosApi = (service) => {
 
