@@ -2,10 +2,10 @@ import axios from "axios";
 // import jwt_decode from "jwt-decode";
 
 // const mode = import.meta.env.VITE_RUN_ENV || "dev";
-// const baseUrl = import.meta.env.VITE_API_URI ;
-const baseUrl = "http://20.196.240.139:8080" ;
+const baseUrl = process.env.REACT_APP_API_URI ;
 console.log(1111111111);
 console.log(baseUrl)
+
 const axiosApi = (service) => {
 
   // token 설정
