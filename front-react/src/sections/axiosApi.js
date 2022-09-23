@@ -20,6 +20,7 @@ const axiosApi = (service) => {
     axios.defaults.baseURL = baseUrl;
   else
     axios.defaults.baseURL = baseUrl + ((service) ? `/${  service}` : "");
+  console.log("axios baseURL : ", axios.defaults.baseURL);
 
   console.log("axios got ready in ", service);
   return axios.create();
